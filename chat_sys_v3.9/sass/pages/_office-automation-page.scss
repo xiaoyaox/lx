@@ -1,0 +1,305 @@
+@charset 'UTF-8';
+
+@keyframes showDetail
+{
+ from {right: -100%;}
+ to {right: 0;}
+}
+@keyframes hideDetail
+{
+ from {right: 0;}
+ to {right: -100%;}
+}
+.Office_Automation_container{
+  .checkbox_list{
+    padding:0 0.2rem;
+    height: auto;
+    overflow: hidden;
+  }
+  .sub-title{
+    height: auto;
+    overflow: hidden;
+    padding:0.5rem 0 0.2rem;
+  }
+  .sub-title h5{
+    margin-bottom: 0.2rem;
+    color: #000;
+    font-size: 18px;
+  }
+  .searchBar_custom .am-search{
+    padding: 0;
+    border:solid 1px #efeff4;
+    margin-bottom: 0.3rem;
+  }
+  .switch_custom{
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    margin-bottom: 0.2rem;
+  }
+  .switch_custom .am-list-item{
+    background-color: #efeff4;
+  }
+  .searchBar_custom .am-search,
+  .searchBar_custom .am-search-input,
+  .searchBar_custom .am-search-input .am-search-synthetic-ph,
+  .searchBar_custom .am-search-input input[type="search"]{
+    height: 0.77rem;
+    line-height: 0.77rem;
+  }
+  .checkbox_custom{
+    float: left;
+    width: 33.33%;
+    height: auto;
+    overflow: hidden;
+    margin:8px 0;
+    line-height: 22px;
+    font-size: 14px;
+  }
+  .checkbox_custom .checkbox{
+    display: none;
+  }
+  .checkbox_custom .checkbox + label{
+    font-weight: normal;
+    padding-left: 30px;
+    position: relative;
+    color: #000;
+  }
+  .checkbox_custom .checkbox + label .box{
+    padding: 10px;
+    background-color: #fafafa;
+    border: 1px solid #cacece;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+    border-radius: 3px;
+    display: block;
+    position: absolute;
+    left:0;
+    top:0;
+  }
+  .checkbox_custom .checkbox:checked + label .box{
+    border: 1px solid #adb8c0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+    color: #99a1a7;
+  }
+  .checkbox_custom .checkbox:checked + label i {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: #4dd865;
+    border-radius: 2px;
+  }
+  .oa_siderbar{
+    .ant-menu-item-group-title{
+      color:rgba(241, 239, 239, 0.99);
+    }
+  }
+  .custom_listView_item{
+    .custom_title{
+      color:black;
+      font-weight: bold;
+    }
+  }
+  .oa_detail_container{
+    position:absolute;
+    top: 0;
+    left:0;
+    z-index: 10000;
+    width:100%;
+    background: #fff;
+    transition: width 1s;
+    -moz-transition: width 1s; /* Firefox 4 */
+    -webkit-transition: width 1s; /* Safari 和 Chrome */
+    -o-transition: width 1s; /* Opera */
+    .oa_detail_top_btn{
+      text-align: center;
+      padding-top: 1em;
+      margin: 1em auto;
+    }
+    .oa_detail_title{
+      font-size:1.5em;
+      color:#000;
+      padding: 0.5rem 0;
+    }
+    .oa_detail_cnt{
+      width: 98%;
+      margin: 0 auto;
+      .am-input-control input{
+        color:gray;
+        text-align: right;
+      }
+      .detail_textarea_title{
+        padding-left: 0.2rem;
+        color: black;
+        margin: 0.2rem 0;
+        font-size:0.34rem;
+      }
+      .am-list-item.am-input-item{
+        padding-left: 0.2rem;
+        padding-right: 0.2rem;
+      }
+      .am-list-item.am-input-item:after{
+        left:0;
+      }
+      .am-list-item.am-textarea-item{
+        padding-right:0.2rem;
+      }
+      .am-textarea-control textarea{
+        color:gray;
+        // box-sizing: content-box;
+        border: 1px solid #d6d1d1;
+      }
+      .custom_tabBar{
+        font-size: 0.4rem;
+      }
+      .select_container .am-list-item{
+        padding-left:0.2rem;
+        padding-right:0.2rem;
+        border-bottom:1px solid #ddd;
+      }
+
+      .select_container .am-list-item .am-list-line{
+        padding-right: 0;
+      }
+      .textarea_container{
+        margin-bottom:0.23rem;
+      }
+      .textarea_container textarea{
+        height: 2rem;
+      }
+      .textarea_container .am-textarea-control{
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      .select_container .am-list-item .am-list-line .am-list-content{
+        font-size:0.34rem;
+      }
+    }
+    .textarea_custom{
+      height: 5.1rem;
+      margin-bottom: 0.2rem;
+      border:solid 1px #ddd;
+    }
+    .textarea_custom textarea{
+      height: 5rem;
+    }
+    .textarea_custom .am-textarea-control{
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+  }
+  .oa_detail_container_show{
+    animation: showDetail 1s;
+    -moz-animation: showDetail 1s;	/* Firefox */
+    -webkit-animation: showDetail 1s;	/* Safari 和 Chrome */
+    -o-animation: showDetail 1s;	/* Opera */
+  }
+  .oa_detail_container_hide{
+    animation: hideDetail 1s;
+    -moz-animation: hideDetail 1s;	/* Firefox */
+    -webkit-animation: hideDetail 1s;	/* Safari 和 Chrome */
+    -o-animation: hideDetail 1s;	/* Opera */
+  }
+  .verifyContent{
+    width:95%;
+    margin:1em auto;
+    border:1px solid #e2dbdb;
+    textarea{
+      min-height:200px;
+    }
+  }
+  .bottom_btn_center{
+    text-align: center;
+    width:90%;
+    margin:1em auto;
+  }
+
+}
+// 圣杯式三栏布局。
+.list_item_container{
+    position: relative;
+    min-height:1rem;
+    .list_item_middle{
+      width:100%;
+      padding-left:1.2rem;
+      padding-right:1.6rem;
+      div.item_title{
+        color:#000;
+        font-size:0.33rem;
+        font-weight:bold;
+        height: 0.5rem;
+        width: 3rem;
+        display:inline-block;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+    }
+    .list_item_left{
+      position: absolute;
+      left:0;
+      top:0;
+      width:1.2rem;
+      margin-right:-1.2rem;
+      .list_item_left_icon{
+        display:inline-block;
+        height: 1rem;
+        margin-right: 0.08rem;
+        padding:4px;
+        color: #fff;
+        background:#f7ba4b;
+        border-radius: 4px;
+      }
+    }
+    .list_item_right{
+      position: absolute;
+      right:0;
+      top:0;
+      width:1.6rem;
+      margin-left:-1.6rem;
+      div{
+        position: absolute;
+        top:'0';
+        right:'0';
+      }
+    }
+}
+.oa_popover{
+  z-index:10009;
+}
+.uploadContainer .ant-upload{
+  width: 90%;
+  margin-left: 5%;
+}
+.picker_list .am-list-item .am-list-line .am-list-extra {
+  flex-basis: initial;
+}
+.my-radio .am-radio {
+  padding: 0.05rem;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  margin-right: 0.1rem;
+}
+.accordion_custom{
+  height: auto;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+.accordion_custom .am-accordion-content-box{
+  background-color: #f3f3f3;
+}
+.oa_detail_container .am-flexbox .am-radio-inner:after{
+    top: -0.13rem;
+    right: 0.05rem;
+}
+#errorMsg{
+  display: none;
+  text-align: center;
+  color: #f00;
+}
+.am-toast{
+  z-index: 10001 !important;
+}

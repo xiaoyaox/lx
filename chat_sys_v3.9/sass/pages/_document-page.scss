@@ -1,0 +1,296 @@
+@charset 'UTF-8';
+.document_container{
+  .ant-btn {
+    border-radius: 1px!important;
+  }
+  .custom_ant_sidebar .ant-menu-inline .ant-menu-submenu-inline .ant-menu-submenu-title:after,
+  .ant-menu-submenu-inline .ant-menu-submenu-title>span{
+    // font-size:18px;
+  }
+  .ant-menu-dark.ant-menu-inline .ant-menu-item{
+    font-size:12px;
+  }
+  .header span:first-child{
+    padding-left: 0px;
+  }
+
+  .doc-search-list {
+    // border-top: 1px solid #d9d9d9;
+    padding-top: 15px;
+
+    .ant-pagination-prev, .ant-pagination-item, .ant-pagination-next {
+      border-radius: 1px;
+    }
+  }
+
+  .am-doc-list, .am-popup-wrap, .am-modal-wrap {
+    .doc-header {
+      font-size: .28rem;
+      width: 100%;
+      padding: .3rem .3rem .18rem;
+    }
+    .doc-radio {
+      padding: 0.05rem;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      margin-right: 0.1rem;
+    }
+    .am-radio {
+      width: 0.3rem;
+      height: 0.3rem;
+    }
+    .am-link {
+      font-size: .26rem;
+    }
+    &.doc-table {
+      .am-list-item .am-list-line .am-list-extra {
+        ms-flex-preferred-size: 30%;
+        flex-basis: 30%;
+      }
+    }
+
+    .am-list .am-list-item {
+      padding-left: 0.3rem;
+      min-height: 0.9rem;
+
+      .am-input-label.am-input-label-5 {
+        width: 1.7rem;
+      }
+      .am-input-label {
+        font-size: 0.34rem;
+        margin-right: 0.1rem;
+      }
+      .am-input-control input {
+        font-size: 0.34rem;
+      }
+      .am-list-line, &.am-radio-item .am-list-line {
+        padding-right: .3rem;
+        min-height: .9rem;
+
+        .am-list-content, .am-list-extra {
+          padding-top: .14rem;
+          padding-bottom: .14rem;
+          font-size: .34rem;
+        }
+        .am-list-content {
+          font-size: .34rem;
+        }
+        .am-list-extra {
+          .am-radio {
+            height: .9rem;
+          }
+          .am-radio-inner {
+            right: .3rem;
+            top: .3rem;
+            width: .3rem;
+            height: .3rem;
+
+            &:after {
+              top: -.05rem;
+              right: .1rem;
+              width: .14rem;
+              height: .28rem;
+              border-width: 0 .03rem .03rem 0;
+            }
+          }
+        }
+        .am-list-brief {
+          font-size: .3rem;
+          margin-top: .12rem;
+        }
+      }
+      .am-list-line-multiple {
+        padding: .25rem .3rem .25rem 0;
+      }
+      .am-input-extra {
+        max-height: .42rem;
+        font-size: .3rem;
+        margin-left: .1rem;
+      }
+      .am-input-clear {
+        width: .42rem;
+        height: .42rem;
+        background-size: .42rem auto;
+        background-position: .04rem .04rem;
+      }
+
+    }
+    .am-list-item.am-input-item {
+      height: 0.9rem;
+      padding-left: 0.3rem;
+      padding-right: 0.3rem;
+    }
+    .am-list-item.am-input-item:after {
+      left: 0.3rem;
+    }
+
+    .am-button {
+      font-size: .36rem;
+      height: .84rem;
+      line-height: .84rem;
+      border-top-left-radius: .1rem;
+      border-top-right-radius: .1rem;
+      border-bottom-left-radius: .1rem;
+      border-bottom-right-radius: .1rem;
+    }
+
+    .am-button-small {
+      font-size: .26rem;
+      height: .6rem;
+      line-height: .6rem;
+      border-top-left-radius: .1rem;
+      border-top-right-radius: .1rem;
+      border-bottom-left-radius: .1rem;
+      border-bottom-right-radius: .1rem;
+      -webkit-background-clip: padding-box;
+      padding: 0 .3rem;
+    }
+    .am-list-header {
+      padding: .3rem .3rem .18rem;
+      font-size: .28rem;
+    }
+    .am-icon-md {
+      width: .44rem;
+      height: .44rem;
+    }
+    .am-modal{
+      &.am-modal-transparent .am-modal-content {
+        border-radius: .14rem;
+        padding-top: .3rem;
+
+        .am-modal-body {
+          padding: 0 .3rem .3rem;
+        }
+      }
+      .am-modal-header {
+        padding: .12rem .3rem .3rem;
+      }
+      .am-modal-title {
+        font-size: .36rem;
+      }
+      .am-modal-body {
+        font-size: .28rem;
+      }
+      .am-modal-button-group-h .am-modal-button {
+        font-size: .32rem;
+        height: 1rem;
+        line-height: 1rem;
+      }
+    }
+  }
+
+  .am-action-sheet-message {
+    font-size: .28rem;
+  }
+  .am-action-sheet-message, .am-action-sheet-title {
+    margin: .3rem auto;
+    padding: 0 .3rem;
+  }
+  .am-action-sheet-button-list-item {
+    font-size: .34rem;
+    height: .84rem;
+    line-height: .84rem;
+  }
+  .am-action-sheet-button-list .am-action-sheet-cancel-button {
+    margin-top: .18rem;
+  }
+  .am-action-sheet-button-list .am-action-sheet-cancel-button-mask {
+    top: -.18rem;
+    height: .18rem;
+  }
+  .am-navbar-title img{
+    margin-right:6px;
+  }
+}
+
+.p-r-10 {
+  padding-right: 10px;
+}
+.m-t-15 {
+  margin-top: 15px;
+}
+.m-b-5 {
+  margin-bottom: 5px;
+}
+.m-r-5 {
+  margin-right: 5px;
+}
+.m-r-10 {
+  margin-right: 10px;
+}
+.m-r-15 {
+  margin-right: 15px;
+}
+.m-l-10 {
+  margin-left: 10px;
+}
+.m-l-20 {
+  margin-left: 20px;
+}
+
+.error, .error:hover, .error:focus {
+  color: #f04134;
+}
+
+.doc-edit-form {
+  .head-img {
+    float: left;
+    width: 130px;
+    height: 130px;
+    background: #eee;
+    // border: 1px solid #ddd;
+    text-align: center;
+  }
+
+  .edit-form {
+    margin-left: 150px;
+  }
+
+  .ant-modal-body {
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  .info-title {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+    margin-top: 5px;
+
+    label {
+      border-bottom: 3px solid #49a9ee;
+      margin-bottom: -2px;
+      padding: 0 5px 5px 0;
+    }
+  }
+  .list-closed {
+    .info-body {
+      display: none;
+    }
+  }
+  .form-item {
+    font-size: 12px;
+    margin-bottom: 24px;
+    color: rgba(0, 0, 0, 0.65);
+    vertical-align: top;
+
+    .item-label {
+      text-align: right;
+      vertical-align: middle;
+      line-height: 32px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .ant-form-item .ant-form-item-label label{
+    display: inline;
+  }
+}
+
+.btn.btn-white {
+  background: #fff;
+}
+.doc-edit-form-mobile.ant-modal{
+  top:0;
+}

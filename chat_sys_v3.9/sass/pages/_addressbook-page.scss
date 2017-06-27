@@ -1,0 +1,115 @@
+@charset 'UTF-8';
+
+.address_book_container{
+  .am-navbar-left{
+    padding-left: 14px;
+  }
+  .header span:first-child{
+    padding-left: 0px;
+  }
+  .address_book_drawer{
+    .am-drawer-sidebar{
+      z-index: 12;
+    }
+  }
+  .am-navbar-title img{
+    margin-right:6px;
+  }
+}
+
+.addressbook_header{
+
+}
+.addressbook_logo{
+
+}
+
+.addressSidebar{
+  .ant-menu-dark .ant-menu-inline.ant-menu-sub {
+      background: #2071a7;
+  }
+}
+
+.addressbook_list {
+    display: flex;
+    flex-direction: column;
+    margin-top:1em;
+    .addressbook_row{
+      // border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+      display: flex;
+      // padding: 1em 1em;
+      // border-radius: 4px;
+      width: 100%;
+    }
+    .addressbook_row:hover{
+      // background-color: rgba(243, 238, 239, 0.78);
+    }
+    .addressbook_avator{
+      display: inline-block;
+      height: 54px;
+      position: relative;
+      .member_icon{
+        border-radius: 54px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        margin-top: 2px;
+        max-width: none;
+      }
+    }
+    .addressbook_detail{
+      flex-grow: 1;
+      flex-shrink: 1;
+      overflow: hidden;
+      padding-left: 10px;
+      text-overflow: ellipsis;
+      div{
+        color:#151313;
+      }
+      div>span{
+        font-weight: 700;
+        color:black;
+        display:inline-block;
+      }
+      .member_name{
+        font-size: .95em;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .member_email{
+        opacity: 0.7;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .member_phone{
+        opacity: 0.7;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .addressbook_oper{
+        position:relative;
+        display:inline-block;
+        margin-left:10px;
+      }
+    }
+    .addressTableList{
+      .ant-table-tbody > tr > td {
+        padding: 0 0 !important;
+      }
+    }
+    .addressTableList .ant-spin-container .ant-table-tbody>tr:nth-child(odd){
+      background: #fff;
+    }
+    .addressTableList .ant-spin-container .ant-table-tbody>tr:nth-child(even){
+      background: #F7F7F7;
+    }
+}
+.contact-edit-mobile{
+  // top:60px;
+}

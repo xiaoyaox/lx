@@ -1,0 +1,18 @@
+@charset 'UTF-8';
+.my-drawer {
+  position: relative;
+  overflow: auto;
+  width:300px;
+  .am-drawer-overlay,.am-drawer-content{
+    opacity: 0;
+    height:0;
+  }
+}
+.my-drawer .am-drawer-sidebar {
+  background-color: #fff;
+  overflow: auto;
+}
+.my-drawer .am-drawer-sidebar .am-list {
+  width: 6rem;
+  padding: 0;
+}

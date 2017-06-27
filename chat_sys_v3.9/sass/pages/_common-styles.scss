@@ -1,0 +1,146 @@
+@charset 'UTF-8';
+
+.mr_10{
+    margin-right: 10px;
+}
+.mr_20{
+    margin-right: 20px;
+}
+.ml_10{
+    margin-left: 10px;
+}
+.ml_20{
+    margin-left: 20px;
+}
+/*加在Header组件上*/
+.custom_ant_header{
+  width:100%;
+  height:100%;
+  background: #FFF !important;
+  color:black !important;
+  .custom_ant_header_logo{
+      display:flex;
+      width: 240px;
+      height: 100%;
+      line-height: 32px;
+      cursor:pointer;
+      color:#fff;
+      font-size:25px;
+      background: rgba(38, 114, 165, 0.88);
+      margin-left:-50px;
+      padding:0 20px;
+      font-weight: 500;
+      // margin: 16px 28px 16px 0;
+      float: left;
+      .logo_icon{
+        display: inline-block;
+        height: 64px;
+        line-height: 64px;
+        position: relative;
+        img{
+          border-radius: 60px;
+          flex-grow: 0;
+          flex-shrink: 0;
+          max-width: none;
+        }
+      }
+      .logo_title{
+        flex-grow: 1;
+        flex-shrink: 1;
+        overflow: hidden;
+        padding-left: 10px;
+        text-overflow: ellipsis;
+        p{
+          line-height: 32px;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+        p:first-child{
+          line-height: 17px;
+          padding-top:8px;
+          font-size: 16px;
+        }
+      }
+  }
+  .bread_content{
+      color:black !important;
+      .bread_item{
+        color:black !important;
+      }
+  }
+}
+.mobile_navbar_custom{
+
+  .am-navbar-title{
+    font-size: 26px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .am-navbar-title img{
+    margin-right:6px;
+  }
+  .anticon.anticon-ellipsis{
+    font-size: 0.5rem;
+    width: 0.7rem;
+    height: 0.5rem;
+  }
+  .anticon.anticon-logout{
+    font-size: 0.4rem;
+    width: 0.7rem;
+    height: 0.5rem;
+  }
+}
+.custom_ant_sidebar {
+  .ant-menu-root{
+    color:rgba(255, 255, 255, 0.6);
+    background: #2071a7 !important;
+  }
+  .ant-menu-submenu-title{
+    color:rgba(255, 255, 255, 0.6);
+    background: #2071a7;
+  }
+  .ant-menu-item{
+    color:rgba(255, 255, 255, 0.6);
+    background: #2071a7;
+  }
+  .ant-menu-dark.ant-menu-inline .ant-menu-item-selected{
+    background: rgba(255, 255, 255, 0.0980392);
+  }
+  .ant-menu-item-active.ant-menu-item:hover{
+    background: #0e649e;
+  }
+  .ant-menu-submenu-active.ant-menu-submenu:hover{
+    background: #0e649e;
+  }
+  .ant-menu-item-active.ant-menu-item-selected.ant-menu-item:hover{
+    background:rgba(255, 255, 255, 0.0980392);
+  }
+}
+.ant-table-wrapper{
+  .ant-table{
+      width: 100% !important;
+  }
+}
+
+.ant-select-dropdown{
+  z-index: 99999 !important;
+}
+.am-picker-popup-mask{
+  z-index: 99999 !important;
+}
+.am-picker-popup-wrap{
+  z-index: 100000 !important;
+}
+.am-tab-bar-bar .am-tab-bar-tab .am-tab-bar-tab-title{
+  font-size:0.3rem;
+}
+.am-tabs .am-tabs-bar .am-tabs-prevpage:before{
+  background: -ms-linear-gradient(left, #ffffff, rgba(255, 255, 255, 0));
+  background: -moz-linear-gradient(left, #ffffff, rgba(255, 255, 255, 0));
+  background: -o-linear-gradient(left, #ffffff, rgba(255, 255, 255, 0));
+  background: -webkit-linear-gradient(left, #ffffff, rgba(255, 255, 255, 0));
+}
+.am-tabs .am-tabs-bar .am-tabs-nextpage:after{
+  background: -ms-linear-gradient(left, rgba(255, 255, 255, 0), #ffffff);
+  background: -moz-linear-gradient(left, rgba(255, 255, 255, 0), #ffffff);
+  background: -o-linear-gradient(left, rgba(255, 255, 255, 0), #ffffff);
+  background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0), #ffffff);
+}

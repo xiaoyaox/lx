@@ -1,0 +1,38 @@
+@charset 'UTF-8';
+.noticeList{
+  .am-list-header {
+    font-size: .35rem;
+    color:black;
+    margin-left:-0.1rem;
+  }
+  .oa_detail_container .oa_detail_cnt .am-list-item .am-input-label{
+    font-weight: normal;
+  }
+  .am-tab-bar-bar{
+    width:97%;
+  }
+  .am-textarea-control textarea{
+    border:1px solid #ddd;
+  }
+  .am-button span{
+    margin-left: 0.2rem;
+    font-size: 0.33rem;
+  }
+  .mobile_navbar_custom .am-navbar-title{
+    font-size: 0.43rem;
+
+  }
+  .oa_detail_container .oa_detail_cnt .am-list-item.am-input-item{
+    padding-right: 0.30rem;
+  }
+
+}
+.newDispatchList{
+  .am-list-item .am-input-control input{
+    text-align: right;
+    padding-right: 0.1rem;
+  }
+  .am-list-item.am-input-item:after{
+    border:0;
+  }
+}

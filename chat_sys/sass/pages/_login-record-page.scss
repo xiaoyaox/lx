@@ -1,0 +1,274 @@
+@charset 'UTF-8';
+.login_record_container{
+  .ant-table-wrapper, .range-time{
+    margin-left: 240px
+  }
+  .loginRecordMobile{
+    margin-top: 61px;
+      .row{
+        margin-right:0;
+        margin-left:0;
+      }
+      .range-time {
+        margin-left:0;
+        margin-top:60px;
+        padding-bottom:0;
+      }
+      .range-time .ant-calendar-picker{
+        margin-top:1px;
+      }
+      .ant-table-wrapper{
+        margin-left:0;
+      }
+      .m-l-10{
+        float: right;
+      }
+      @media screen and (max-width: 767px){
+        .m-l-10{
+          margin-top:10px;
+        }
+      }
+      .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+          word-break:normal;
+          width: 25%;
+          padding: 16px 0px;
+          text-align:center;
+      }
+  }
+  .ant-table table{
+    width:100%;
+    margin: 0 auto;
+  }
+  .ant-fullcalendar-fullscreen{
+    margin-left:110px;
+  }
+
+  .listContent>div:nth-child(even){
+    background: #49a9ee;
+  }
+  .sysHeader{
+    width:100%;
+    height:70px;
+    padding-left: 217px;
+          h5{
+            height:70px;
+            line-height: 70px;
+            font-weight: bold;
+            font-size: 18px;
+          }
+    }
+  .ant-fullcalendar-header{
+    text-align: center;
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-header .ant-radio-group{
+    margin-left: 78px
+  }
+  .ant-fullcalendar-month-select{
+      margin-left: 15px
+  }
+  .login_record_container .ant-fullcalendar-fullscreen .ant-fullcalendar-content{
+    display: none;
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-cell .ant-fullcalendar-value {
+    font-size: 20px;
+    border-radius: 50%;
+    width:32px;
+    height:32px;
+    padding:5px 5px 0 0;
+    margin-top:38px;
+  }
+  .addDay{
+    background: #49a9ee!important;
+    color:#fff!important;
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-month-panel-cell .ant-fullcalendar-value{
+    font-size: 20px;
+    width:47px;
+    height:32px;
+    padding:5px 5px 0 0;
+    margin-top:38px;
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-column-header{
+            text-align: center;
+            font-size: 20px;
+
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-column-header{
+    padding-right:0;
+  }
+  .ant-select,.ant-radio-group{
+    font-size:20px;
+  }
+  .ant-fullcalendar-table .ant-fullcalendar-tbody tr td:nth-child(6) .ant-fullcalendar-value,
+  .ant-fullcalendar-table .ant-fullcalendar-tbody tr td:nth-child(7) .ant-fullcalendar-value,
+  .ant-fullcalendar-table thead tr th:nth-child(6) .ant-fullcalendar-column-header-inner,
+  .ant-fullcalendar-table thead tr th:nth-child(7) .ant-fullcalendar-column-header-inner{
+      color:#E02D4B;
+  }
+  .ant-fullcalendar-table .ant-fullcalendar-tbody tr td.ant-fullcalendar-next-month-btn-day .ant-fullcalendar-value {
+    color: rgba(0, 0, 0, 0.25);
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-content{
+    text-align:center;
+  }
+  .ant-fullcalendar-content .events li span:first-child{
+    font-size:35px;
+  }
+  .ant-fullcalendar-content .events li span{
+    vertical-align:baseline;
+  }
+  .ant-fullcalendar-content .events li{
+    font-size:25px;
+    color:#108ee9;
+  }
+  .events {
+  line-height: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  }
+
+  .events li {
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .events li span {
+    vertical-align: middle;
+  }
+
+  .events li span:first-child {
+    font-size: 9px;
+    margin-right: 4px;
+  }
+
+  .event-warning {
+    color: #fac450;
+  }
+
+  .event-normal {
+    color: #108ee9;
+  }
+
+  .event-error {
+    color: #f50;
+  }
+
+  .notes-month {
+    text-align: center;
+  }
+  .am-navbar-left{
+    padding-left:14px;
+  }
+  .am-navbar-left-icon{
+    margin-left: 0;
+  }
+  .range-time {
+    padding-bottom: 25px;
+
+    .ant-calendar-picker {
+      margin-right: 10px;
+    }
+  }
+}
+  .header{
+    width:100%;
+    height:54px;
+    background: #25658F;
+    color:#fff;
+    line-height: 54px;
+    span:first-child{
+      padding-left: 20px;
+      font-size: 18px;
+    }
+    a{
+      float:right;
+      padding-right: 20px;
+    }
+  }
+  .body{
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    border-bottom: 2px solid #d2cfcf;
+    margin:0 20px;
+    padding: 10px 0;
+  }
+  .content{
+    font-size: 16px;
+    padding: 6px;
+    margin:0 20px;
+    border-bottom: 2px solid #d2cfcf;
+    word-break: break-all;
+  }
+  .loginRecord_calendar{
+  width:98%;
+  margin:10px auto;
+  .loginRecord_ant_col{
+    text-align:center;
+  }
+  .calendar_header_col{
+    height:1rem;
+  }
+  .calendar_body_col{
+    height:2rem;
+    margin-bottom: 0.3rem;
+    .calendar_body_cnt{
+      position:relative;
+      border:1px solid #bfb5b5;
+      border-radius: 4px;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 0 8px #696161;
+      .calendar_badge{
+        position:absolute;
+        top:5px;
+        left:5px;
+        .login_tag{
+          color:#fff;
+          display:inline-block;
+          border-radius: 5px;
+          padding:3px 5px;
+          margin-left:5px;
+          background: #878c85;
+        }
+      }
+    }
+  }
+}
+.ant-fullcalendar-fullscreen {
+  .ant-fullcalendar-cell {
+    &.cell-record .ant-fullcalendar-value{
+      background: #49a9ee;
+      color:#fff;
+    }
+  }
+}
+.ant-layout {
+  background: #fff!important;
+}
+.mobile_userLoginRecord{
+  .ant-fullcalendar-fullscreen{
+    margin-left:0;
+  }
+  .ant-fullcalendar-header{
+    padding:0;
+  }
+  .ant-fullcalendar-fullscreen
+  .ant-fullcalendar-cell .ant-fullcalendar-value{
+    margin-top: 7px
+  }
+  .ant-fullcalendar-month-select,.ant-fullcalendar-fullscreen
+  .ant-fullcalendar-header .ant-radio-group{
+    margin-left: 6px;
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-date{
+    padding:0;
+    height:50px;
+  }
+  .ant-fullcalendar-fullscreen .ant-fullcalendar-content{
+    height:0;
+  }
+}
