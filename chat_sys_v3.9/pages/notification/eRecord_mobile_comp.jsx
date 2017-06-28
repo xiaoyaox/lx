@@ -34,9 +34,53 @@ class ERecordisMobileComp extends React.Component {
         publicValue:zhNow,
         dataDepartmentSource:[],
         sValue:['办公室'],
+        columns:[],
       };
   }
   componentWillMount(){
+    const columns = [{
+      title: '联系人',
+      dataIndex: 'Contacts',
+      render:(text,record,index) => (
+        <div key={record.id+123456}>
+          <SwipeAction style={{ backgroundColor: '#f3f3f3' }}
+            autoClose
+            disabled={this.state.hasOperaPermission ? false : true}
+            right={[
+              {
+                text: '取消',
+                onPress: () => console.log('cancel'),
+                style: { backgroundColor: '#ddd', color: 'white' },
+              },
+              {
+                text: '删除',
+                onPress: ()=>{this.showDeleteConfirmDialog(record)},
+                style: { backgroundColor: '#F4333C', color: 'white' },
+              },
+            ]}
+            onOpen={() => console.log('global open')}
+            onClose={() => console.log('global close')}
+            >
+              <div className="addressbook_row">
+                <span className="addressbook_avator">
+                  <img className="member_icon" width="54" height="54" src={this.props.iconArr[index]}/>
+                </span>
+                <div className="addressbook_detail">
+                    <div className="member_name">
+                      <span>({record.userName}) &nbsp;</span>
+                      {this.state.hasOperaPermission ? (<div className="addressbook_oper">
+                        <a href="javascript:;" onClick={()=>{this.showAddEditDialog(text,record,index)}} style={{marginLeft:'1em'}}><Icon type="edit" />编辑</a>
+                      </div>):null}
+                    </div>
+                    <div className="member_email"><span>电子邮件：</span>{record.email}</div>
+                    <div className="member_phone"><span>电话号码：</span>{record.telephoneNumber+','+record.groupShortCode}</div>
+                </div>
+              </div>
+          </SwipeAction>
+        </div>
+          )
+    }];
+    this.setState({columns:columns});
     OAUtils.getOrganization({
       tokenunid:this.props.tokenunid,
       successCall: (data)=>{
