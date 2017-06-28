@@ -1,4 +1,4 @@
-//最新发文
+//电子档案手机界面
 import $ from 'jquery';
 import React from 'react';
 import * as Utils from 'utils/utils.jsx';
@@ -7,16 +7,14 @@ import * as OAUtils from 'pages/utils/OA_utils.jsx';
 
 // import myWebClient from 'client/my_web_client.jsx';
 import { Modal,WhiteSpace, SwipeAction, Flex,Button,
-  Tabs, RefreshControl, ListView,SearchBar,Picker,List,NavBar,DatePicker,InputItem} from 'antd-mobile';
+   RefreshControl, ListView,SearchBar,Picker,List,NavBar,DatePicker,InputItem} from 'antd-mobile';
 import { Icon} from 'antd';
-const TabPane = Tabs.TabPane;
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 const alert = Modal.alert;
-//发文管理
-class NewDispatchList extends React.Component {
+class ERecordisMobileComp extends React.Component {
   constructor(props) {
       super(props);
       this.showDeleteConfirmDialog = this.showDeleteConfirmDialog.bind(this);
@@ -26,7 +24,6 @@ class NewDispatchList extends React.Component {
       this.state = {
         url:'http://ip:port/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
         moduleUrl:'/openagent?agent=hcit.project.moa.transform.agent.MobileViewWork', //模块url,当前是通知通告模块
-        tabsArr:["按日期", "按年度", "按主办部门", "组合查询"],
         activeTabkey:'按日期',
         listData:[],
         dataSource: dataSource.cloneWithRows([]),
@@ -36,6 +33,7 @@ class NewDispatchList extends React.Component {
         validValue:zhNow,
         publicValue:zhNow,
         dataDepartmentSource:[],
+        sValue:['办公室'],
       };
   }
   componentWillMount(){
@@ -250,114 +248,45 @@ class NewDispatchList extends React.Component {
       </SwipeAction>
       );
     };
-    let dateSource;
-
-    let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
-      let yearSource=(
-        <div className={'oa_detail_cnt'}>
-          <div style={{marginLeft:'-0.1rem',marginRight:'-0.2rem'}}>
-            <Flex>
-              <Flex.Item>
-                <div style={{borderBottom: '1px solid #ddd'}}>
-                  <Picker data={year} cols={1}
-                    {...getFieldProps('year')}>
-                    <List.Item arrow="horizontal">年份</List.Item>
-                  </Picker>
-                </div>
-              </Flex.Item>
-            </Flex>
-            <Flex>
-              <Flex.Item>
-                <div className="select_container">
-                  <Picker data={month} cols={1}
-                    {...getFieldProps('month')}>
-                    <List.Item arrow="horizontal">月份</List.Item>
-                  </Picker>
-                </div>
-              </Flex.Item>
-            </Flex>
-          </div>
+    let sponsorDepartmentSource=(
+      <div className={'oa_detail_cnt'}>
+        <div style={{marginLeft:'-0.1rem',marginRight:'-0.2rem'}}>
+          <Flex>
+            <Flex.Item>
+              <div style={{borderBottom: '1px solid #ddd',borderTop: '1px solid #ddd'}}>
+                <Picker data={sponsorDepartment} cols={1} value={this.state.sValue}
+                  {...getFieldProps('sponsorDepartment')}>
+                  <List.Item arrow="horizontal">{this.state.dataDepartmentSource[0]}</List.Item>
+                </Picker>
+              </div>
+            </Flex.Item>
+          </Flex>
+          <Flex>
+            <Flex.Item>
+              <div style={{borderBottom: '1px solid #ddd'}}>
+                  <InputItem
+                  editable={true} labelNumber={2} placeholder="请输入姓名"><Icon type="user"
+                  style={{color: '#278197',fontSize:'0.6rem'}}/></InputItem>
+              </div>
+            </Flex.Item>
+          </Flex>
+          <Flex>
+            <Flex.Item>
+              <div style={{borderBottom: '1px solid #ddd'}}>
+                  <InputItem
+                  editable={true} labelNumber={2} placeholder="请输入手机号"><Icon type="phone"
+                  style={{color: '#EF9F2E',fontSize:'0.6rem'}}/></InputItem>
+              </div>
+            </Flex.Item>
+          </Flex>
         </div>
-      );
-      let sponsorDepartmentSource=(
-        <div className={'oa_detail_cnt'}>
-          <div style={{marginLeft:'-0.1rem',marginRight:'-0.2rem'}}>
-            <Flex>
-              <Flex.Item>
-                <div className="select_container">
-                  <Picker data={sponsorDepartment} cols={1}
-                    {...getFieldProps('sponsorDepartment')}>
-                    <List.Item arrow="horizontal">按主办部门</List.Item>
-                  </Picker>
-                </div>
-              </Flex.Item>
-            </Flex>
-          </div>
-        </div>
-      );
-      let combinationSearch=(
-                <div className={'oa_detail_cnt'}>
-                  <div style={{marginLeft:'-0.1rem',marginRight:'-0.2rem'}}>
-                      <Flex>
-                        <Flex.Item>
-                          <div style={{borderBottom: '1px solid #ddd'}}>
-                              <InputItem
-                              editable={true} labelNumber={2} placeholder="标题">标题</InputItem>
-                          </div>
-                        </Flex.Item>
-                      </Flex>
-                      <Flex>
-                        <Flex.Item>
-                          <div style={{borderBottom: '1px solid #ddd'}}>
-                              <InputItem
-                              editable={true} labelNumber={4} placeholder="拟稿单位">拟稿单位</InputItem>
-                          </div>
-                        </Flex.Item>
-                      </Flex>
-                      <Flex>
-                        <Flex.Item>
-                          <div style={{borderBottom: '1px solid #ddd'}}>
-                              <InputItem
-                              editable={true} labelNumber={4} placeholder="发文文号">发文文号
-                              </InputItem>
-                          </div>
-                        </Flex.Item>
-                      </Flex>
-                      <Flex>
-                        <Flex.Item>
-                          <div style={{borderBottom: '1px solid #ddd'}}>
-                            <DatePicker className="forss"
-                              mode="date"
-                              onChange={this.onvalidValueChange}
-                              value={this.state.validValue}
-                            >
-                            <List.Item arrow="horizontal">成文起始日期</List.Item>
-                            </DatePicker>
-                          </div>
-                        </Flex.Item>
-                      </Flex>
-                      <Flex>
-                        <Flex.Item>
-                          <div style={{borderBottom: '1px solid #ddd'}}>
-                            <DatePicker className="forss"
-                              mode="date"
-                              onChange={this.onpublicValueChange}
-                              value={this.state.publicValue}
-                            >
-                            <List.Item arrow="horizontal">成文结束日期</List.Item>
-                            </DatePicker>
-                          </div>
-                        </Flex.Item>
-                      </Flex>
-                    </div>
-                      <Button type="primary" style={{margin:'0 auto',marginTop:'0.1rem',width:'90%',marginBottom:'0.1rem'}}
-                      ><Icon type="search" />查询</Button>
-                  </div>
-      );
-      let pagesContent=index=="1"?yearSource:(index=="2")?sponsorDepartmentSource:
-      (index=="3")?combinationSearch:null;
-      return (<TabPane tab={tabName} key={tabName} >
-        <div>{pagesContent}</div>
+        <Button type="primary" style={{margin:'0 auto',marginTop:'0.1rem',width:'90%',marginBottom:'0.1rem'}}
+        ><Icon type="search" />查询</Button>
+      </div>
+    );
+    let multiTabPanels =
+      (<div>
+        <div>{sponsorDepartmentSource}</div>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={listRow}
@@ -376,23 +305,21 @@ class NewDispatchList extends React.Component {
             onRefresh={this.onRefresh}
           />}
         />
-      </TabPane>);
-    });
+        </div>)
+    ;
+
     return (
       <div className="newDispatchList">
-        <Tabs swipeable={false} defaultActiveKey={this.state.activeTabkey} pageSize={4} onTabClick={this.handleTabClick}>
-
           {multiTabPanels}
-        </Tabs>
         <WhiteSpace />
       </div>
     )
   }
 }
 
-NewDispatchList.defaultProps = {
+ERecordisMobileComp.defaultProps = {
 };
-NewDispatchList.propTypes = {
+ERecordisMobileComp.propTypes = {
 };
 
-export default createForm()(NewDispatchList);
+export default createForm()(ERecordisMobileComp);

@@ -15,6 +15,7 @@ const { SubMenu } = Menu;
 const { Header, Content, Sider ,Footer} = Layout;
 
 import StatisticalAnalysisComp from './notification/statisticalAnalysis_comp.jsx'; //统计分析
+import ERecordComp from './notification/eRecord_comp.jsx'; //电子档案
 import NoticeComp from './notification/notice_comp.jsx'; //通知公告
 
 import signup_logo from 'images/signup_logo.png';
@@ -49,6 +50,7 @@ class NotificationPage extends React.Component {
             redressOrganId:'', //矫正系统里的组织机构Id.
             noticeListData:null,
             tongjiData:null, //统计分析的数据
+            eRecordData:null,//电子档案的数据
             isMobile: Utils.isMobile()
         };
     }
@@ -60,6 +62,8 @@ class NotificationPage extends React.Component {
         this.setState({  current: "1",menuTab:0}); }
       else if(item.key==2){
         this.setState({  current: "2",menuTab:1});
+      }else if(item.key==3){
+        this.setState({  current: "3",menuTab:2});
       }
 
     }
@@ -168,11 +172,16 @@ class NotificationPage extends React.Component {
           this.getServerAnalysisData(this.state.redressOrganId,1);
         }
         return (<StatisticalAnalysisComp tongjiData={this.state.tongjiData} />);
+      }else if(this.state.menuTab==2){ //电子档案
+        // if(this.state.redressOrganId && !this.state.eRecordData){
+        //   this.getServerERecordData(this.state.redressOrganId,1);
+        // }
+        return (<ERecordComp eRecordData={this.state.eRecordData} />);
       }
       return null;
     }
     getMobileElements(sidebarMobile){
-      let headerName = this.state.menuTab==0 ? "通知公告" : "统计分析";
+      let headerName = this.state.menuTab==0 ? "通知公告" : this.state.menuTab==1?"统计分析":"电子档案";
         const drawerProps = {
           open: this.state.open,
           position: this.state.position,
@@ -203,7 +212,7 @@ class NotificationPage extends React.Component {
       }
       getPCElements(sidebar){
         let content = this.getContentElements();
-        let headerName = this.state.menuTab==0 ? "通知公告" : "统计分析";
+        let headerName = this.state.menuTab==0 ? "通知公告" : this.state.menuTab==1?"统计分析":"电子档案";
         return (
           <div>
               <Layout style={{ height: '100vh' }}>
