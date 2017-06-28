@@ -23,6 +23,7 @@ class DispatchList extends React.Component {
         colsNameCn:["拟稿日期","拟稿单位", "拟稿人", "文件标题", "发文类型", "发文文号", "当前办理人", "办理状态"],
         colsNameEn:["draftDate", "draftUnit", "draftPerson", "fileTitle", "fileType", "fileNum", "curUsers", "status"],
         listData:[],
+        isLoading:false,
         detailInfo:null,
         dataSource: dataSource.cloneWithRows([]),
         refreshing: true,
@@ -31,62 +32,11 @@ class DispatchList extends React.Component {
       };
   }
   componentWillMount(){
-    const data = [{
-      key: '1',
-      title:'发文管理111',
-      verifState: '办理中',
-      type: '草稿箱',
-      sendTime:'2017/06/01'
-    }, {
-      key: '2',
-      title:'发文管理2222',
-      verifState: '没通过',
-      type: '待办',
-      sendTime:'2017/05/01'
-    }, {
-      key: '3',
-      title:'发文管理333',
-      verifState: '待审核',
-      type: '办理中',
-      sendTime:'2017/05/01'
-    }, {
-      key: '4',
-      title:'发文管理333',
-      verifState: '待审核',
-      type: '已发布',
-      sendTime:'2017/05/01'
-    }];
-    this.setState({refreshing:false});
-    //本地假数据
-    // setTimeout(() => {
-    //   this.setState({
-    //     listData:data,
-    //     dataSource: this.state.dataSource.cloneWithRows(data),
-    //     refreshing: false
-    //   });
-    // }, 1000);
     //从服务端获取数据。
     this.getServerListData(this.state.activeTabkey,1);
   }
-  onRefresh = () => {
-    if(this.state.refreshing){ //如果正在刷新就不用重复刷了。
-      return;
-    }
-    console.log('onRefresh');
-    this.setState({ refreshing: true });
-    //本地假数据
-    // setTimeout(() => {
-    //   this.setState({
-    //     dataSource: this.state.dataSource.cloneWithRows(this.state.listData),
-    //     refreshing: false
-    //   });
-    // }, 2000);
-    // //从服务端获取数据。
-    this.getServerListData(this.state.activeTabkey,1,()=>{
-      this.setState({ refreshing: false });
-    });
-  };
   getServerListData = (keyName,currentpage,callback)=>{ //从服务端获取列表数据
+    this.setState({isLoading:true});
     OAUtils.getDispatchListData({
       tokenunid: this.props.tokenunid,
       currentpage:currentpage,
@@ -94,31 +44,19 @@ class DispatchList extends React.Component {
       viewcolumntitles:this.state.colsNameCn.join(','),
       successCall: (data)=>{
         console.log("get server signReport list data:",data);
-        let parseData = this.formatServerListData(data.values);
+        let {colsNameEn} = this.state;
+        this.setState({isLoading:false});
+        let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
         this.setState({
           listData:data.values,
           dataSource: this.state.dataSource.cloneWithRows(parseData),
         });
         callback && callback();
+      },
+      errorCall: (data)=>{
+        this.setState({isLoading:false});
       }
     });
-  }
-  formatServerListData = (values)=>{ //整理后端发过来的列表数据。
-    let listArr = [];
-    let {colsNameEn} = this.state;
-    values.forEach((value, index)=>{
-      let obj = {key:index};
-      Object.keys(value).forEach((key) => {
-        let num = key.split("column")[1];
-        if (!isNaN(num)) {
-          obj[colsNameEn[+num]] = value[key];
-        }else{
-          obj[key] = value[key];
-        }
-      });
-      listArr.push(obj);
-    });
-    return listArr;
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -211,6 +149,8 @@ class DispatchList extends React.Component {
       return (<TabPane tab={tabName} key={tabName} >
         <Button className="btn" type="primary" style={{margin:"0.16rem"}} onClick={()=>this.onClickAddEdit()}><Icon type="plus" /> 新建</Button>
         <SearchBar placeholder="搜索" />
+        {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
+        {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
         {!this.state.showAddEdit && !this.state.showDetail ? (
           <ListView
             dataSource={this.state.dataSource}

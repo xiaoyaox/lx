@@ -51,24 +51,13 @@ class DS_DetailComp extends React.Component {
       successCall: (data)=>{
         console.log("get 发文管理的表单数据:",data);
         let formDataRaw = data.values;
-        let formData = this.formatServerListData(data.values);
+        let formData = OAUtils.formatFormData(data.values);
         this.setState({
           formData,
           formDataRaw
         });
       }
     });
-  }
-  formatServerListData = (values)=>{
-    let formData = {};
-    Object.keys(values).forEach((key)=>{
-      if(typeof values[key] == "object"){
-        formData[key] = values[key].value;
-      }else{
-        formData[key] = values[key];
-      }
-    });
-    return formData;
   }
   onNavBarLeftClick = (e) => {
     this.setState({isHide:true});

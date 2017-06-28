@@ -4,11 +4,10 @@ import React from 'react';
 import * as Utils from 'utils/utils.jsx';
 import myWebClient from 'client/my_web_client.jsx';
 import * as OAUtils from 'pages/utils/OA_utils.jsx';
-import { WingBlank,Popover, WhiteSpace, Button, NavBar, TabBar} from 'antd-mobile';
+import { WingBlank, WhiteSpace, Button, NavBar, TabBar} from 'antd-mobile';
 
 import {Icon } from 'antd';
 import moment from 'moment';
-const Item = Popover.Item;
 import 'moment/locale/zh-cn';
 
 import DetailContentComp from './detail_content_comp.jsx';
@@ -48,7 +47,7 @@ class SignReportDetail extends React.Component {
       unid:this.props.detailInfo.unid,
       successCall: (data)=>{
         console.log("get 签报管理的表单数据:",data);
-        let formData = this.formatServerListData(data.values);
+        let formData = OAUtils.formatFormData(data.values);
         this.setState({
           formData,
           formDataRaw:data.values,
@@ -56,23 +55,11 @@ class SignReportDetail extends React.Component {
       }
     });
   }
-  formatServerListData = (values)=>{
-    let formData = {};
-    Object.keys(values).forEach((key)=>{
-      if(typeof values[key] == "object"){
-        formData[key] = values[key].value;
-      }else{
-        formData[key] = values[key];
-      }
-    });
-    return formData;
-  }
+
   onNavBarLeftClick = (e) => {
     this.props.backToTableListCall();
   }
-  onClickCancelBack = ()=>{
-    let {subTabsArr} = this.state;
-  }
+
   onBackDetailCall = ()=>{
     this.setState({curSubTab:'content',selectedTab:''});
   }

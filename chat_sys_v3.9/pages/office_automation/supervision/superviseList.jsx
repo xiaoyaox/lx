@@ -26,74 +26,36 @@ class SuperviseList extends React.Component {
         colsNameEn:["acceptDate", "title", "sendUnit", "superviseType", "curUsers"],
         listData:[],
         dataSource: dataSource.cloneWithRows([]),
-        tokenunid:'',
+        detailInfo:null,
+        isLoading:false, //是否在加载列表数据
         showAdd:false,
         showDetail:false,
       };
   }
   componentWillMount(){
-    const data = [{
-      key: '1',
-      title:'督办管理111',
-      superviseType: '督办A',
-      sendUnit:'',
-      curUsers: '吴龙',
-      acceptDate:'2017/06/21'
-    }, {
-      key: '2',
-      title:'督办管理2222',
-      sendUnit:'',
-      superviseType: '督办B',
-      curUsers: '吴龙,王焕清',
-      acceptDate:'2017/05/01'
-    }, {
-      key: '3',
-      title:'督办管理333',
-      sendUnit:'',
-      superviseType: '督办A',
-      curUsers: '吴龙,王焕清,尹小英',
-      acceptDate:'2017/06/01'
-    }];
-    //本地假数据
-    setTimeout(() => {
-      this.setState({
-        listData:data,
-        dataSource: this.state.dataSource.cloneWithRows(data),
-      });
-    }, 1000);
     //从服务端获取数据。
-    // this.getServerListData(this.state.activeTabkey,1);
+    this.getServerListData(this.state.activeTabkey,1);
   }
   getServerListData = (keyName,currentpage)=>{
-    OAUtils.getSignReportListData({
+    this.setState({isLoading:true});
+    OAUtils.getSuperviseListData({
       tokenunid: this.props.tokenunid,
       currentpage:currentpage,
       keyName:keyName,
       viewcolumntitles:this.state.colsNameCn.join(','),
       successCall: (data)=>{
-        console.log("get server supervise list data:",data);
-        let parseData = this.formatServerListData(data.values);
+        console.log("get 督办管理的list data:",data);
+        this.setState({isLoading:false});
+        let {colsNameEn} = this.state;
+        let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
         this.setState({
           listData:data.values,
           dataSource: this.state.dataSource.cloneWithRows(parseData),
         });
+      },
+      errorCall: (data)=>{
+        this.setState({isLoading:false});
       }
-    });
-  }
-  formatServerListData = (values)=>{ //整理后端发过来的列表数据。
-    let listArr = [];
-    let {colsNameEn} = this.state;
-    values.forEach((value, index)=>{
-      let obj = {key:index};
-      Object.keys(value).forEach((key) => {
-        let num = key.split("column")[1];
-        if (!isNaN(num)) {
-          obj[colsNameEn[+num]] = value[key];
-        }else{
-          obj[key] = value[key];
-        }
-      });
-      listArr.push(obj);
     });
   }
   showDeleteConfirmDialog = (record)=>{
@@ -110,11 +72,11 @@ class SuperviseList extends React.Component {
     this.setState({
       activeTabkey:key
     });
-    // this.getServerListData(key,1);
+    this.getServerListData(key,1);
   }
   onClickOneRow = (rowData)=>{
-    console.log("incomingList click rowData:",rowData);
-    this.setState({showDetail:true});
+    console.log("督办管理某行的点击--rowData:",rowData);
+    this.setState({detailInfo:rowData, showDetail:true});
   }
   onClickAddNew = ()=>{
     this.setState({showAdd:true});
@@ -188,6 +150,8 @@ class SuperviseList extends React.Component {
         </WingBlank>
         <WhiteSpace />
         <SearchBar placeholder="搜索" />
+        {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
+        {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
         {(!this.state.showAdd && !this.state.showDetail)?(<ListView
           dataSource={this.state.dataSource}
           renderRow={listRow}
@@ -210,12 +174,23 @@ class SuperviseList extends React.Component {
         <Tabs defaultActiveKey={this.state.activeTabkey}
           pageSize={5}
           swipeable={false}
+          swipeable={false}
           onTabClick={this.handleTabClick}>
           {multiTabPanels}
         </Tabs>
         <WhiteSpace />
-        {this.state.showAdd?<SuperviseAdd backToTableListCall={this.backToTableListCall}/>:null}
-        {this.state.showDetail?<SuperviseDetail backToTableListCall={this.backToTableListCall}/>:null}
+        {this.state.showAdd?
+          <SuperviseAdd
+            tokenunid={this.props.tokenunid}
+            backToTableListCall={this.backToTableListCall}
+          />:null}
+        {this.state.showDetail?
+          <SuperviseDetail
+            tokenunid={this.props.tokenunid}
+            activeTabkey={this.state.activeTabkey}
+            detailInfo={this.state.detailInfo}
+            backToTableListCall={this.backToTableListCall
+          }/>:null}
       </div>
     )
   }

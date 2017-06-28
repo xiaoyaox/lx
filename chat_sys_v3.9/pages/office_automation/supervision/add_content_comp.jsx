@@ -10,7 +10,7 @@ import { WingBlank, WhiteSpace, Button, InputItem, NavBar,
   TextareaItem,Flex,List,Picker} from 'antd-mobile';
 
 import {Icon,Upload } from 'antd';
-
+//督办管理的新增内容
 class AddContentCompRaw extends React.Component {
   constructor(props) {
       super(props);

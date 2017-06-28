@@ -10,7 +10,7 @@ import { WingBlank, WhiteSpace, Button, InputItem,
   TextareaItem,Flex,List,Picker} from 'antd-mobile';
 
 import {Icon,Upload } from 'antd';
-
+//督办管理的编辑详情内容
 class DetailContentCompRaw extends React.Component {
   constructor(props) {
       super(props);
@@ -45,7 +45,15 @@ class DetailContentCompRaw extends React.Component {
 
   render() {
     const { getFieldProps } = this.props.form;
-    const {detailInfo} = this.props;
+    const {detailInfo, formData, formDataRaw} = this.props;
+    let items = formDataRaw.gwlc?formDataRaw.gwlc.items:[];
+    //请示类别当前值就是gwlc字段的值。--公文流程。
+    let owerPleaTypes = items.map((item)=>{ //请示类别。
+      return {
+        label:item.text,
+        value:item.value
+      }
+    });
     let superviseTypes = [
       {
         label:"",
@@ -75,7 +83,10 @@ class DetailContentCompRaw extends React.Component {
         <Flex>
             <Flex.Item>
               <List style={{ backgroundColor: 'white' }}>
-                <Picker data={superviseTypes} cols={1} {...getFieldProps('superviseType')} onOk={this.onPickerOk}>
+                <Picker data={superviseTypes} cols={1}
+                  {...getFieldProps('superviseType')}
+                  value={formData.superviseType}
+                  onOk={this.onPickerOk}>
                   <List.Item arrow="horizontal">督办类型：</List.Item>
                 </Picker>
               </List>
@@ -91,7 +102,11 @@ class DetailContentCompRaw extends React.Component {
           </Flex>
           <Flex>
             <Flex.Item>
-              <InputItem {...getFieldProps('receiveFileTime', {initialValue:''})}
+              <InputItem
+                {...getFieldProps('receiveFileTime', {
+                    initialValue:detailInfo.acceptDate
+                  })
+                }
                 editable={true}
                 labelNumber={5}>收文日期：</InputItem>
             </Flex.Item>
@@ -100,7 +115,7 @@ class DetailContentCompRaw extends React.Component {
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>来文单位：</div>
               <TextareaItem
-                {...getFieldProps('sendFileUnit')}
+                {...getFieldProps('sendFileUnit',{initialValue:detailInfo.sendUnit})}
                 title=""
                 autoHeight
                 labelNumber={0}
@@ -125,7 +140,7 @@ class DetailContentCompRaw extends React.Component {
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>文件标题：</div>
               <TextareaItem
-                {...getFieldProps('subjectTitle')}
+                {...getFieldProps('subjectTitle',{initialValue:detailInfo.title})}
                 title=""
                 rows={4}
                 labelNumber={0}

@@ -3,14 +3,16 @@ import $ from 'jquery';
 import React from 'react';
 import * as Utils from 'utils/utils.jsx';
 import myWebClient from 'client/my_web_client.jsx';
+import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, NavBar, TabBar,List} from 'antd-mobile';
 
 import {Icon } from 'antd';
 import moment from 'moment';
-
 import 'moment/locale/zh-cn';
 
 import DetailContentComp from './detail_content_comp.jsx';
+import BottomTabBarComp from './bottomTabBar_comp.jsx';
+import SuperviseFlowTraceComp from './flowTrace_comp.jsx'; //办文跟踪视图
 import CommonSendComp from '../common_send_comp.jsx';
 import CommonVerifyComp from '../common_verify_comp.jsx';
 
@@ -22,12 +24,36 @@ class SuperviseDetail extends React.Component {
       this.onNavBarLeftClick = this.onNavBarLeftClick.bind(this);
       this.state = {
         date: zhNow,
+        moduleNameCn:'督办管理',
+        modulename:'duban', //模块名
         hidden: false,
         selectedTab:'',
+        visible:false,
         curSubTab:'content',
+        formData:{}, //经过前端处理的表单数据
+        formDataRaw:{}, //没有经过处理的后端返回的表单数据。
       };
   }
   componentWillMount(){
+    if(this.props.detailInfo && this.props.detailInfo.unid){
+      this.getServerFormData();
+    }
+  }
+  getServerFormData = ()=>{
+    const { detailInfo } = this.props;
+    OAUtils.getModuleFormData({
+      moduleName:this.state.moduleNameCn,
+      tokenunid:this.props.tokenunid,
+      unid:this.props.detailInfo.unid,
+      successCall: (data)=>{
+        console.log("get 督办管理的表单数据:",data);
+        let formData = OAUtils.formatFormData(data.values);
+        this.setState({
+          formData,
+          formDataRaw:data.values,
+        });
+      }
+    });
   }
   onNavBarLeftClick = (e) => {
     this.props.backToTableListCall();
@@ -44,7 +70,8 @@ class SuperviseDetail extends React.Component {
   }
 
   render() {
-     const detailInfo = {};
+    const {detailInfo} = this.props;
+    const {formData,formDataRaw} = this.state;
     //  let clsName = this.props.isShow && !this.state.isHide?
     //  'oa_detail_container ds_detail_container oa_detail_container_show':
     //  'oa_detail_container ds_detail_container oa_detail_container_hide';
@@ -60,78 +87,67 @@ class SuperviseDetail extends React.Component {
           督办处理单
         </NavBar>
         <div style={{marginTop:'60px'}}>
-          {this.state.curSubTab == "content"? (<DetailContentComp detailInfo={detailInfo} />):null}
+          {this.state.curSubTab == "content"?
+            (
+              <DetailContentComp
+                activeTabkey={this.props.activeTabkey}
+                formData={formData}
+                formDataRaw={formDataRaw}
+                detailInfo={detailInfo} />
+            ):null
+          }
         </div>
-        {this.state.curSubTab == "send"? (<CommonSendComp backDetailCall={this.onBackDetailCall} isShow={true}/>):null}
-        {this.state.curSubTab == "verify"? (<CommonVerifyComp backDetailCall={this.onBackDetailCall} isShow={true}/>):null}
-
-        <TabBar
-          unselectedTintColor="#949494"
-          tintColor="#33A3F4"
-          barTintColor="white"
-          hidden={this.state.hidden}
-        >
-          <TabBar.Item
-            title="保存"
-            key="保存"
-            icon={ <Icon type="save" style={{fontSize:'0.4rem'}}/> }
-            selectedIcon={<Icon type="save" style={{color:'blue',fontSize:'0.4rem'}}/>}
-            selected={this.state.selectedTab === 'saveTab'}
-            onPress={() => this.onClickAddSave()}
-          >
-          <div></div>
-          </TabBar.Item>
-          <TabBar.Item
-            title="阅文意见"
-            key="阅文意见"
-            icon={ <Icon type="edit" style={{fontSize:'0.4rem'}} /> }
-            selectedIcon={<Icon type="edit" style={{color:'blue', fontSize:'0.4rem'}}/>}
-            selected={this.state.selectedTab === 'verifyTab'}
-            onPress={() => {
-              this.setState({
-                curSubTab:'verify',
-                selectedTab: 'verifyTab',
-              });
-            }}
-          >
-          <div></div>
-          </TabBar.Item>
-          <TabBar.Item
-            title="发送"
-            key="发送"
-            icon={ <Icon type="export" style={{fontSize:'0.4rem'}} /> }
-            selectedIcon={<Icon type="export" style={{color:'blue', fontSize:'0.4rem'}}/>}
-            selected={this.state.selectedTab === 'sendTab'}
-            onPress={() => {
-              this.setState({
-                curSubTab:'send',
-                selectedTab: 'sendTab',
-              });
-            }}
-          >
-          <div></div>
-          </TabBar.Item>
-          <TabBar.Item
-            title="正文"
-            key="正文"
-            icon={ <Icon type="menu-unfold" style={{fontSize:'0.4rem'}} /> }
-            selectedIcon={<Icon type="menu-fold" style={{color:'blue', fontSize:'0.4rem'}}/>}
-            selected={this.state.selectedTab === 'articleTxtTab'}
-            onPress={() => {
-              this.setState({
-                curSubTab:'content',
-                selectedTab: 'articleTxtTab',
-              });
-            }}
-          >
-          <div></div>
-          </TabBar.Item>
-        </TabBar>
-        <div style={{position:'fixed',bottom:'1rem',right:'0',display:'none'}}>
-          <List>
-            <List.Item onClick={this.onClickMoreOperate}>办文跟踪</List.Item>
-          </List>
-        </div>
+        {this.state.curSubTab == "send"?
+          (<CommonSendComp
+            tokenunid={this.props.tokenunid}
+            docunid={detailInfo.unid}
+            modulename={this.state.modulename}
+            otherssign={formData["_otherssign"]}
+            backDetailCall={this.onBackDetailCall}
+            gwlcunid={formData["gwlc"]} />):null
+        }
+        {this.state.curSubTab == "verify"?
+          (<CommonVerifyComp
+            tokenunid={this.props.tokenunid}
+            docunid={detailInfo.unid}
+            modulename={this.state.modulename}
+            backDetailCall={this.onBackDetailCall}
+            gwlcunid={formData["gwlc"]} />
+          ):null
+        }
+        {this.state.curSubTab == "track"?
+          (<SignReportFlowTraceComp
+            tokenunid={this.props.tokenunid}
+            backDetailCall={this.onBackDetailCall}
+            docunid={detailInfo.unid}
+            modulename={this.state.modulename}
+            gwlcunid={formData["gwlc"]} />
+          ):null
+        }
+        <BottomTabBarComp
+          hidden={this.state.curSubTab != "content"}
+          isAddNew={false}
+          formDataRaw={formDataRaw}
+          selectedTab={this.state.selectedTab}
+          onClickAddSave={()=>this.onClickAddSave()}
+          onClickVerifyBtn={()=>{
+            this.setState({
+              curSubTab:'verify',
+              selectedTab: 'verifyTab',
+            });
+          }}
+          onClickSendBtn={()=>{
+            this.setState({
+              curSubTab:'send',
+              selectedTab: 'sendTab',
+            });
+          }}
+          onClickTrackBtn={()=>{
+            this.setState({
+              curSubTab:'track',
+              selectedTab: 'trackTab',
+            });
+          }} />
       </div>
     )
   }

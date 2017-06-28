@@ -80,7 +80,6 @@ class DS_SendContentComp extends React.Component {
       docunid: this.props.docunid,
       gwlcunid:this.props.gwlcunid,
       modulename:this.props.modulename,
-      backlogurl:"/fwgl/frmfwcld.jsp",
       title: this.props.detailInfo.fileTitle,
       message: 1,
       personunids: person,

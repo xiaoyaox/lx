@@ -3,6 +3,7 @@ import $ from 'jquery';
 import React from 'react';
 import * as Utils from 'utils/utils.jsx';
 import myWebClient from 'client/my_web_client.jsx';
+import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, NavBar, TabBar} from 'antd-mobile';
 
 import {Icon } from 'antd';
@@ -60,10 +61,17 @@ class SuperviseAdd extends React.Component {
           督办处理单
         </NavBar>
         <div style={{marginTop:'60px'}}>
-          {this.state.curSubTab == "content"? (<AddContentComp />):null}
+          {this.state.curSubTab == "content"?
+            (<AddContentComp detailInfo={detailInfo}/>):null}
         </div>
-        {this.state.curSubTab == "send"? (<CommonSendComp backDetailCall={this.onBackContentCall} isShow={true}/>):null}
-        {this.state.curSubTab == "verify"? (<CommonVerifyComp backDetailCall={this.onBackContentCall} isShow={true}/>):null}
+        {this.state.curSubTab == "send"?
+          (<CommonSendComp
+            tokenunid={this.props.tokenunid}
+            backDetailCall={this.onBackContentCall} isShow={true}/>):null}
+        {this.state.curSubTab == "verify"?
+          (<CommonVerifyComp
+            tokenunid={this.props.tokenunid}
+            backDetailCall={this.onBackContentCall} isShow={true}/>):null}
         <TabBar
           unselectedTintColor="#949494"
           tintColor="#33A3F4"

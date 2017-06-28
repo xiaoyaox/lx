@@ -24,6 +24,7 @@ class SignReportList extends React.Component {
         activeTabkey:'待办',
         colsNameCn:["拟稿日期", "文件标题", "主办部门", "当前办理人"],
         colsNameEn:["draftDate", "fileTitle", "department", "curUsers"],
+        isLoading:false,
         listData:[],
         dataSource: dataSource.cloneWithRows([]),
         detailInfo:null,
@@ -32,37 +33,10 @@ class SignReportList extends React.Component {
       };
   }
   componentWillMount(){
-    const data = [{
-      key: '1',
-      fileTitle:'签报管理111',
-      department:'148中心',
-      curUsers:'彭秀胜,吴龙',
-      draftDate:'2017/06/01'
-    }, {
-      key: '2',
-      fileTitle:'签报管理2222',
-      department:'148中心',
-      curUsers:'彭秀胜,吴龙',
-      draftDate:'2017/05/01'
-    }, {
-      key: '3',
-      fileTitle:'签报管理333',
-      department:'148中心',
-      curUsers:'总经理,毛锐,彭秀胜,吴龙',
-      draftDate:'2017/05/01'
-    }];
-    //本地假数据
-    // setTimeout(() => {
-    //   this.setState({
-    //     listData:data,
-    //     dataSource: this.state.dataSource.cloneWithRows(data),
-    //     refreshing: false
-    //   });
-    // }, 1000);
-    //从服务端获取数据。
     this.getServerListData(this.state.activeTabkey,1);
   }
   getServerListData = (keyName,currentpage)=>{
+    this.setState({isLoading:false});
     OAUtils.getSignReportListData({
       tokenunid: this.props.tokenunid,
       currentpage:currentpage,
@@ -70,30 +44,18 @@ class SignReportList extends React.Component {
       viewcolumntitles:this.state.colsNameCn.join(','),
       successCall: (data)=>{
         console.log("get server signReport list data:",data);
-        let parseData = this.formatServerListData(data.values);
+        this.setState({isLoading:false});
+        let {colsNameEn} = this.state;
+        let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
         this.setState({
           listData:data.values,
           dataSource: this.state.dataSource.cloneWithRows(parseData),
         });
+      },
+      errorCall: (data)=>{
+        this.setState({isLoading:false});
       }
     });
-  }
-  formatServerListData = (values)=>{ //整理后端发过来的列表数据。
-    let listArr = [];
-    let {colsNameEn} = this.state;
-    values.forEach((value, index)=>{
-      let obj = {key:index};
-      Object.keys(value).forEach((key) => {
-        let num = key.split("column")[1];
-        if (!isNaN(num)) {
-          obj[colsNameEn[+num]] = value[key];
-        }else{
-          obj[key] = value[key];
-        }
-      });
-      listArr.push(obj);
-    });
-    return listArr;
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -188,6 +150,8 @@ class SignReportList extends React.Component {
         </WingBlank>
         <WhiteSpace />
         <SearchBar placeholder="搜索" />
+        {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
+        {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
         {(!this.state.showAdd && !this.state.showDetail)?(<ListView
           dataSource={this.state.dataSource}
           renderRow={listRow}

@@ -75,17 +75,14 @@ export function getDispatchListData(opts){
   opts['viewname'] = 'hcit.module.fwgl.ui.VeFwcld';
   getOAServerListData(opts);
 }
-
 //获取签报管理的列表数据
 export function getSignReportListData(opts){
   opts['viewname'] = 'hcit.module.qbgl.ui.VeCld';
   getOAServerListData(opts);
 }
-
 //获取督办管理的列表数据
-
 export function getSuperviseListData(opts){
-  opts['viewname'] = 'hcit.module.dbgl.ui.VeDbCld';
+  opts['viewname'] = 'hcit.module.duban3.ui.VeDbjgl';
   getOAServerListData(opts);
 }
 
@@ -107,23 +104,23 @@ export function getOAServerListData(params){ //从服务端获取列表数据
       "viewcolumntitles" : options.viewcolumntitles
     }
   }));
-  $.ajax({
-      url : options.url,
-      data : {
-        "tokenunid" : options.tokenunid,
-        "param" : param,
-        "url" : options.moduleUrl
-      },
-      async : true,
-      success : (result)=>{
-        let res  = decodeURIComponent(result);
-        res = res.replace(/%20/g, " ");
-        let data = JSON.parse(res);
-        if(data.code == "1"){
-          options.successCall && options.successCall(data);
-        }
+  finalRequestServer(options,param);
+}
+export function formatServerListData(colsNameEn, values){ //整理后端发过来的列表数据。
+  let listArr = [];
+  values.forEach((value, index)=>{
+    let obj = {key:index};
+    Object.keys(value).forEach((key) => {
+      let num = key.split("column")[1];
+      if (!isNaN(num)) {
+        obj[colsNameEn[+num]] = value[key];
+      }else{
+        obj[key] = value[key];
       }
     });
+    listArr.push(obj);
+  });
+  return listArr;
 }
 
 //获取模块编辑的表单数据
@@ -131,7 +128,8 @@ export function getModuleFormData(params) {
   const moduleName2FormName = {
     "签报管理":"hcit.module.qbgl.ui.FrmCld",
     "发文管理":"hcit.module.fwgl.ui.FrmFwcld",
-    "收文管理":"hcit.module.swgl.ui.FrmSwcld"
+    "收文管理":"hcit.module.swgl.ui.FrmSwcld",
+    "督办管理":"hcit.module.duban3.ui.FrmDbjgl"
   }
   let options = Object.assign({},{
     url: 'http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
@@ -182,6 +180,17 @@ export function getModuleFormData(params) {
         }
       }
     });
+}
+export function formatFormData(values){
+  let formData = {};
+  Object.keys(values).forEach((key)=>{
+    if(typeof values[key] == "object"){
+      formData[key] = values[key].value;
+    }else{
+      formData[key] = values[key];
+    }
+  });
+  return formData;
 }
 //保存模块编辑的表单数据
 export function saveModuleFormData(params) {
@@ -292,6 +301,12 @@ export function getFlowSendInfo(params) {
 }
 //保存发送的信息
 export function saveFlowSendInfo(params) {
+  const modulename2backlogurl = {
+    "qbgl":"/qbgl/frmcld.jsp",   //签报管理
+    "fwgl":"/fwgl/frmfwcld.jsp", //发文管理
+    "swgl":"/swgl/frmswcld.jsp",  //收文管理
+    "duban":"/duban3/frmdbjgl.jsp"   //督办管理
+  }
   let options = Object.assign({},{
     url: 'http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
     moduleUrl: '/openagent?agent=hcit.project.moa.transform.agent.DoFlowSendV2', //模块url
@@ -302,7 +317,7 @@ export function saveFlowSendInfo(params) {
       "docunid" : options.docunid,
       "gwlcunid" : options.gwlcunid,
       "modulename" : options.modulename,
-      "backlogurl" : options.backlogurl, //这个是跟模块有关的一个参数。
+      "backlogurl" : modulename2backlogurl[options.modulename], //这个是跟模块有关的一个参数。
       "title" : options.title,  //表单标题
       "message" : options.message, //提示方式，1为网络消息，2为手机短信
       "personunids" : options.personunids   //值为{name:"流程分支名", persons:"逗号隔开的personUnid."}

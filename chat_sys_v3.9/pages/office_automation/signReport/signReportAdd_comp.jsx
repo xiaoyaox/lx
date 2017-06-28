@@ -61,7 +61,8 @@ class SignReportAdd extends React.Component {
           签报处理单
         </NavBar>
         <div style={{marginTop:'60px'}}>
-          {this.state.curSubTab == "content"? (<AddContentComp detailInfo={detailInfo} />):null}
+          {this.state.curSubTab == "content"?
+            (<AddContentComp detailInfo={detailInfo} />):null}
         </div>
 
         {this.state.curSubTab == "send"? (<CommonSendComp
