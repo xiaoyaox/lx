@@ -3,6 +3,7 @@ import $ from 'jquery';
 import React from 'react';
 import * as Utils from 'utils/utils.jsx';
 import { createForm } from 'rc-form';
+import * as OAUtils from 'pages/utils/OA_utils.jsx';
 
 // import myWebClient from 'client/my_web_client.jsx';
 import { Modal,WhiteSpace, SwipeAction, Flex,Button,
@@ -34,24 +35,51 @@ class DispatchList extends React.Component {
         date: zhNow,
         validValue:zhNow,
         publicValue:zhNow,
+        dataDepartmentSource:[],
       };
   }
   componentWillMount(){
+    OAUtils.getOrganization({
+      tokenunid:this.props.tokenunid,
+      successCall: (data)=>{
+        //console.log("获取OA的组织机构数据：",data);
+        let organizationList = OAUtils.formatOrganizationData(data.values);
+        //console.log("获取OA的组织机构数据：",organizationList);
+        //console.log("获取OA的组织机构数据：",organizationList.length);
+        let dataDepartment=[];
+        for(var i=0;i<=organizationList.length-1;i++){
+          dataDepartment[i]=organizationList[i].commonname;
+        }
+        dataDepartment.splice(dataDepartment.indexOf('暂定'),1);
+        dataDepartment.splice(dataDepartment.indexOf('打印室'),1);
+        dataDepartment.splice(dataDepartment.indexOf(undefined),1);
+        this.setState({
+          dataDepartmentSource:dataDepartment,
+        });
+        //console.log("获取OA的组织机构数据：",this.state.dataDepartmentSource);
+
+        }
+
+    });
+
     const data = [{
       key: '1',
-      title:'发文管理111',
+      title:'党委会议纪要',
+      verifState: '拟稿单位:办公室',
       type: '办理',
-      sendTime:'2017/06/01'
+      sendTime:'2017/03/13'
     }, {
       key: '2',
-      title:'发文管理2222',
+      title:'党委会议纪要',
+      verifState: '拟稿单位:办公室',
       type: '办理2',
-      sendTime:'2017/05/01'
+      sendTime:'2017/06/08'
     }, {
       key: '3',
-      title:'发文管理333',
+      title:'党委会议纪要',
+      verifState: '拟稿单位:办公室',
       type: '办理2',
-      sendTime:'2017/05/01'
+      sendTime:'2017/06/15'
     }];
     //本地假数据
     setTimeout(() => {
@@ -144,6 +172,7 @@ class DispatchList extends React.Component {
     console.log("incomingList click rowData:",rowData);
   }
   render() {
+
     const { getFieldProps, getFieldError } = this.props.form;
     const year = [{label: '2014 ',value: '2014 '},{label: '2015 ',value: '2015 '},{label: '2016 ',value: '2016 '},
     {label: '2017 ',value: '2017 '}];
@@ -151,9 +180,20 @@ class DispatchList extends React.Component {
     {label: '4 ',value: '4 '},{label: '5 ',value: '5 '},{label: '6 ',value: '6 '},{label: '7 ',value: '7 '},
     {label: '8 ',value: '8 '},{label: '9 ',value: '9 '},{label: '10 ',value: '10 '},{label: '11 ',value: '11 '},
     {label: '12 ',value: '12 '}];
-    const sponsorDepartment = [{label: '局领导 ',value: '局领导 '},{label: '办公室 ',value: '办公室 '},{label: '戒毒工作管理处 ',value: '戒毒工作管理处 '},
-    {label: '监狱工作管理处 ',value: '监狱工作管理处 '}];
-
+    // const sponsorDepartment = [{label: '局领导 ',value: '局领导 '},{label: '办公室 ',value: '办公室 '},{label: '戒毒工作管理处 ',value: '戒毒工作管理处 '},
+    // {label: '监狱工作管理处 ',value: '监狱工作管理处 '}];
+    // let sponsorDepartment1 = this.state.dataDepartmentSource.map((departmentName,index)=>{
+    //   [{label: {departmentName},value: {departmentName}}]});
+    //console.log(sponsorDepartment[0].label);
+    let sponsorDepartment = [];
+    for(var i=0;i<=this.state.dataDepartmentSource.length-1;i++){
+      sponsorDepartment.push({label:this.state.dataDepartmentSource[i],
+         value: this.state.dataDepartmentSource[i]});
+      // sponsorDepartment1[i].label=this.state.dataDepartmentSource[i];
+      // sponsorDepartment1[i].value=this.state.dataDepartmentSource[i];
+    }
+    // console.log(this.state.dataDepartmentSource);
+    // console.log(sponsorDepartment1);
     const separator = (sectionID, rowID) => (
       <div
         key={`${sectionID}-${rowID}`}
@@ -203,6 +243,7 @@ class DispatchList extends React.Component {
               </div>
               <div className={'list_item_right'}>
                 <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.sendTime}</div>
+                <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.verifState}</div>
               </div>
             </div>
         </div>
@@ -316,7 +357,6 @@ class DispatchList extends React.Component {
       let pagesContent=index=="1"?yearSource:(index=="2")?sponsorDepartmentSource:
       (index=="3")?combinationSearch:null;
       return (<TabPane tab={tabName} key={tabName} >
-        <SearchBar placeholder="搜索" />
         <div>{pagesContent}</div>
         <ListView
           dataSource={this.state.dataSource}

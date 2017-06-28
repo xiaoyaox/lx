@@ -64,19 +64,22 @@ class DispatchList extends React.Component {
 
     const data = [{
       key: '1',
-      title:'发文管理111',
+      title:'党委会议纪要',
+      verifState: '拟稿单位:办公室',
       type: '办理',
-      sendTime:'2017/06/01'
+      sendTime:'2017/03/13'
     }, {
       key: '2',
-      title:'发文管理2222',
+      title:'党委会议纪要',
+      verifState: '拟稿单位:办公室',
       type: '办理2',
-      sendTime:'2017/05/01'
+      sendTime:'2017/06/08'
     }, {
       key: '3',
-      title:'发文管理333',
+      title:'党委会议纪要',
+      verifState: '拟稿单位:办公室',
       type: '办理2',
-      sendTime:'2017/05/01'
+      sendTime:'2017/06/15'
     }];
     //本地假数据
     setTimeout(() => {
@@ -240,6 +243,7 @@ class DispatchList extends React.Component {
               </div>
               <div className={'list_item_right'}>
                 <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.sendTime}</div>
+                <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.verifState}</div>
               </div>
             </div>
         </div>
@@ -353,7 +357,6 @@ class DispatchList extends React.Component {
       let pagesContent=index=="1"?yearSource:(index=="2")?sponsorDepartmentSource:
       (index=="3")?combinationSearch:null;
       return (<TabPane tab={tabName} key={tabName} >
-        <SearchBar placeholder="搜索" />
         <div>{pagesContent}</div>
         <ListView
           dataSource={this.state.dataSource}

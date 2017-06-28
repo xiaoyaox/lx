@@ -246,6 +246,7 @@ class NotificationPage extends React.Component {
           >
             <Menu.Item key="1"><Icon type="file" />通知公告</Menu.Item>
             <Menu.Item key="2"><Icon type="file-text" />统计分析</Menu.Item>
+            <Menu.Item key="3"><Icon type="folder" />电子档案</Menu.Item>
           </Menu>
         </Sider>
       );

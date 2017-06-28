@@ -26,6 +26,8 @@ const analysisKey2name = {
   "sjdw":"手机定位",
   "bddw":"北斗定位"
 };
+
+//矫正系统的统计分析。
 class StatisticalAnalysisComp extends React.Component {
   constructor(props) {
       super(props);
@@ -141,7 +143,7 @@ class StatisticalAnalysisComp extends React.Component {
   (<div id="tongjiChartsMainContaner" style={{height:600,margin:"0 auto",marginTop:30}}></div>);
     return (
       <div className="notificationdetai_container">
-        <span style={{fontSize:"2em",width:'100%',marginTop:22,color:'black',fontWeight:'bold'}}>统计分析类型数量</span>
+        <span style={{fontSize:"1em",width:'100%',marginTop:22,color:'black',fontWeight:'bold'}}>统计分析类型数量</span>
         {echartView}
       </div>
     )

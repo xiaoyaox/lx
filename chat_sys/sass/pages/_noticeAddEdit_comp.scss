@@ -30,9 +30,27 @@
 .newDispatchList{
   .am-list-item .am-input-control input{
     text-align: right;
-    padding-right: 0.1rem;
+    padding-right: 0.2rem;
+    font-size: 0.30rem;
   }
   .am-list-item.am-input-item:after{
     border:0;
+  }
+  .am-list-item .am-list-line .am-list-content{
+    padding-left: 0.30rem;
+  }
+  .am-list-item .am-input-label,.am-list-item .am-list-line .am-list-content
+  ,.am-list-item .am-list-line .am-list-extra,.am-list-item .am-list-line .am-list-arrow{
+    font-size: 0.30rem;
+  }
+  .am-list-item .am-input-label.am-input-label-2,.am-list-item .am-input-label.am-input-label-4{
+    width: auto;
+      padding-left: 0.30rem;
+  }
+  .am-list-item .am-list-line .am-list-arrow{
+    padding-right: 0.50rem;
+  }
+  .list_item_container .list_item_right{
+    width: 80%;
   }
 }

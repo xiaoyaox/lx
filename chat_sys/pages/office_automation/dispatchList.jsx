@@ -7,6 +7,7 @@ import { Modal,WhiteSpace, SwipeAction,Popup, Tabs, RefreshControl, ListView,Sea
 import { Icon} from 'antd';
 const TabPane = Tabs.TabPane;
 import DS_DetailComp from './ds_detail_comp.jsx';//公文详情
+import DS_AddComp from './ds_add_comp.jsx';//公文详情
 
 const alert = Modal.alert;
 //发文管理
@@ -27,7 +28,7 @@ class DispatchList extends React.Component {
         dataSource: dataSource.cloneWithRows([]),
         refreshing: true,
         showDetail:false,
-        isEdit:false
+        showEdit: false
       };
   }
   componentWillMount(){
@@ -142,11 +143,11 @@ class DispatchList extends React.Component {
   }
 
   backToTableListCall = ()=>{
-    this.setState({showDetail:false,isEdit: false});
+    this.setState({showDetail:false, showEdit:false});
   }
 
   onClickAddEdit = ()=>{
-    this.setState({showDetail:true, isEdit: true});
+    this.setState({showEdit:true});
   }
 
   render() {
@@ -211,7 +212,7 @@ class DispatchList extends React.Component {
       return (<TabPane tab={tabName} key={tabName} >
         <Button className="btn" type="primary" style={{margin:"0.16rem"}} onClick={()=>this.onClickAddEdit()}><Icon type="plus" /> 新建</Button>
         <SearchBar placeholder="搜索" />
-        {!this.state.showAddEdit && !this.state.showDetail ? (
+        {!this.state.showEdit && !this.state.showDetail ? (
           <ListView
             dataSource={this.state.dataSource}
             renderRow={listRow}
@@ -240,8 +241,12 @@ class DispatchList extends React.Component {
         <WhiteSpace />
         {this.state.showDetail?
           (<DS_DetailComp
-            isEdit={this.state.isEdit}
             detailInfo={this.state.detailInfo}
+            tokenunid={this.props.tokenunid}
+            backToTableListCall={()=>this.backToTableListCall()}
+            />):null}
+        {this.state.showEdit?
+          (<DS_AddComp
             tokenunid={this.props.tokenunid}
             backToTableListCall={()=>this.backToTableListCall()}
             />):null}

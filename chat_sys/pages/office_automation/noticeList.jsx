@@ -39,22 +39,22 @@ class NoticeList extends React.Component {
   componentWillMount(){
     const data = [{
       key: '1',
-      title:'周计划1',
+      title:'周计划(6.19-6.23)',
       verifState: '已通过',
       type: '办理',
-      sendTime:'2017/06/01'
+      sendTime:'2017/06/20'
     }, {
       key: '2',
-      title:'周计划2',
+      title:'周计划(6.12-6.16)',
       verifState: '未通过',
       type: '办理2',
-      sendTime:'2017/05/01'
+      sendTime:'2017/06/15'
     }, {
       key: '3',
-      title:'周计划3',
+      title:'周计划(6.05-6.09)',
       verifState: '待审核',
       type: '办理2',
-      sendTime:'2017/05/01'
+      sendTime:'2017/06/08'
     }];
     //本地假数据
 

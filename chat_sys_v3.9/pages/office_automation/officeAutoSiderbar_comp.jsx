@@ -40,7 +40,8 @@ class OaSiderbarComp extends React.Component {
         this.setState({current:"通知公告"});
       break;
       case "司法行政系统信息查询":
-        window.open("http://www.rufa.gov.cn");
+        this.setState({current:"司法行政系统信息查询"});
+        // window.open("http://www.rufa.gov.cn");
       break;
       default:
         break;

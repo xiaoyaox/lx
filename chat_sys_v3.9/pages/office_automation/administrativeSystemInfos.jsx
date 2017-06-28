@@ -12,15 +12,24 @@ class AdministrativeSystemInfos extends React.Component {
   componentDidMount(){
   }
 
+  setIframeHeight = ()=>{
+    var ifm= document.getElementById("AdministrativeSystemInfos_frame");
+    ifm.width =  document.documentElement.clientWidth;
+    if(ifm.width<1000){
+      ifm.width = 1000;
+    }
+    ifm.height =  document.documentElement.clientHeight;
+  }
+
   render() {
     return (
       <div>
-        <iframe 
-          src="backtop.html"
-          frameborder="0"
-          scrolling="no"
-          id="external-frame"
-          onload="setIframeHeight(this)"></iframe>
+        <iframe
+          src="http://www.rufa.gov.cn"
+          frameBorder="0"
+          scrolling="auto"
+          id="AdministrativeSystemInfos_frame"
+          onLoad={()=>this.setIframeHeight()}></iframe>
       </div>
     )
   }

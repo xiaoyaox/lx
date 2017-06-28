@@ -21,6 +21,7 @@ export function loginOASystem(loginUser, successCall){ //登录OA系统
         var data  = decodeURIComponent(result);
         data = data.replace(/%20/g, " ");
         let res = JSON.parse(data);
+
         if(res.code == "1"){
           successCall && successCall(res);
         }

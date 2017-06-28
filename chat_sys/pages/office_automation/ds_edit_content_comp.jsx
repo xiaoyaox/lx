@@ -9,7 +9,6 @@ import { WingBlank, WhiteSpace, Button, InputItem, NavBar,
 import { Icon, Select } from 'antd';
 import { createForm } from 'rc-form';
 const Step = Steps.Step;
-import CommonSendComp from './common_flowTrace_comp.jsx';//办文跟踪
 
 class DS_EditContentComp extends React.Component {
   constructor(props) {
@@ -217,127 +216,6 @@ class DS_EditContentComp extends React.Component {
           <Flex>
             <Flex.Item><InputItem placeholder="xxxxx" editable="fasle" labelNumber={4}>日期</InputItem></Flex.Item>
           </Flex>
-        </div>
-        <div className="custom_tabBar" id="FW">
-          <TabBar
-          unselectedTintColor="#949494"
-          tintColor="#33A3F4"
-          barTintColor="white"
-          hidden={this.state.hidden}
-          >
-            <TabBar.Item
-              icon={<Icon type="save" size="lg" />}
-              selectedIcon={<Icon type="save" size="lg" style={{color:"rgb(51, 163, 244)"}} />}
-              title="保存"
-              key="保存"
-              selected={this.state.selectedTab === 'redTab'}
-              onPress={() => this.onClickSave()}
-              data-seed="logId1"
-            >
-              {this.renderContent('保存')}
-            </TabBar.Item>
-            <TabBar.Item
-              title="正文"
-              key="正文"
-              icon={
-                <Icon type="left-circle" size="lg" />
-              }
-              selectedIcon={
-                <Icon type="left-circle" size="lg" style={{color:"rgb(51, 163, 244)"}} />
-              }
-              selected={this.state.selectedTab === 'blueTab'}
-              onPress={() => this.onClickSubTab("正文")}
-              data-seed="logId"
-            >
-              {this.renderContent('正文')}
-            </TabBar.Item>
-            <TabBar.Item
-              icon={<Icon type="upload" size="lg" />}
-              selectedIcon={<Icon type="upload" size="lg" style={{color:"rgb(51, 163, 244)"}} />}
-              title="上传附件"
-              key="上传附件"
-              selected={this.state.selectedTab === 'greenTab'}
-              onPress={() => this.onClickSubTab("上传附件")}
-            >
-              {this.renderContent('上传附件')}
-            </TabBar.Item>
-            <TabBar.Item
-              icon={<Icon type="export" size="lg" />}
-              selectedIcon={<Icon type="export" size="lg" style={{color:"rgb(51, 163, 244)"}} />}
-              title="发送"
-              key="发送"
-              selected={this.state.selectedTab === 'yellowTab'}
-              onPress={() => this.onClickSubTab("发送")}
-            >
-              {this.renderContent('发送')}
-            </TabBar.Item>
-          </TabBar>
-        </div>
-
-        <div className="custom_tabBar" id="LDFW">
-          <TabBar
-          unselectedTintColor="#949494"
-          tintColor="#33A3F4"
-          barTintColor="white"
-          hidden={this.state.hidden}
-          >
-            <TabBar.Item
-              icon={<Icon type="save" size="lg" />}
-              selectedIcon={<Icon type="save" size="lg" style={{color:"rgb(51, 163, 244)"}} />}
-              title="保存"
-              key="保存"
-              selected={this.state.selectedTab === 'redTab'}
-              onPress={() => this.onClickSave()}
-              data-seed="logId1"
-            >
-              {this.renderContent('保存')}
-            </TabBar.Item>
-            <TabBar.Item
-              title="正文"
-              key="正文"
-              icon={
-                <Icon type="left-circle" size="lg" />
-              }
-              selectedIcon={
-                <Icon type="left-circle" size="lg" style={{color:"rgb(51, 163, 244)"}} />
-              }
-              selected={this.state.selectedTab === 'blueTab'}
-              onPress={() => this.onClickSubTab("正文")}
-              data-seed="logId"
-            >
-              {this.renderContent('正文')}
-            </TabBar.Item>
-            <TabBar.Item
-              icon={<Icon type="upload" size="lg" />}
-              selectedIcon={<Icon type="upload" size="lg" style={{color:"rgb(51, 163, 244)"}} />}
-              title="上传附件"
-              key="上传附件"
-              selected={this.state.selectedTab === 'greenTab'}
-              onPress={() => this.onClickSubTab("上传附件")}
-            >
-              {this.renderContent('上传附件')}
-            </TabBar.Item>
-            <TabBar.Item
-              icon={<Icon type="export" size="lg" />}
-              selectedIcon={<Icon type="export" size="lg" style={{color:"rgb(51, 163, 244)"}} />}
-              title="发送"
-              key="发送"
-              selected={this.state.selectedTab === 'yellowTab'}
-              onPress={() => this.onClickSubTab("发送")}
-            >
-              {this.renderContent('发送')}
-            </TabBar.Item>
-            <TabBar.Item
-              icon={<Icon type="export" size="lg" />}
-              selectedIcon={<Icon type="export" size="lg" style={{color:"rgb(51, 163, 244)"}} />}
-              title="办结"
-              key="办结"
-              selected={this.state.selectedTab === 'yellowTab'}
-              onPress={() => this.onClickSubTab("办结")}
-            >
-              {this.renderContent('办结')}
-            </TabBar.Item>
-          </TabBar>
         </div>
       </div>
     )

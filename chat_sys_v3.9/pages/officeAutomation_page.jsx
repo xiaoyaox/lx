@@ -26,7 +26,7 @@ import NewDispatchList from './office_automation/newDispatchList.jsx'; //最新�
 import OaSiderbarComp from './office_automation/officeAutoSiderbar_comp.jsx';//侧边栏
 
 import DocumentSubmission from './office_automation/documentSubmission.jsx';//公文报送
-// import WorkSupervision from './office_automation/workSupervision.jsx';//工作督查
+import AdministrativeSystemInfos from './office_automation/administrativeSystemInfos.jsx';//工作督查
 // import InternalNoticeComp from './office_automation/internalNotice_comp.jsx'; //对内宣传
 // import WorkNoticeComp from './office_automation/workNotice_comp.jsx'; //工作通知
 
@@ -57,8 +57,10 @@ class LoginRecordPage extends React.Component {
       this.setState({ open: !this.state.open });
     }
     afterChooseMenuItemCall = (key)=>{
+      let drawerOpen = this.state.open;
       this.setState({
-        current:key
+        current:key,
+        open:!drawerOpen
       });
     }
     onClickBackToModules(){
@@ -99,6 +101,9 @@ class LoginRecordPage extends React.Component {
         break;
         case "公文报送":
           content = (<DocumentSubmission title={current} tokenunid={tokenunid}/>);
+        break;
+        case "司法行政系统信息查询":
+          content = (<AdministrativeSystemInfos title={current} tokenunid={tokenunid}/>);
         break;
         default:
           break;

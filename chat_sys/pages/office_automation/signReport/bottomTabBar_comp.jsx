@@ -11,6 +11,7 @@ class BottomTabBarComp extends React.Component {
       this.getTabBarItemVerify = this.getTabBarItemVerify.bind(this);
       this.getTabBarItemSend = this.getTabBarItemSend.bind(this);
       this.getTabBarItemTrack = this.getTabBarItemTrack.bind(this);
+      this.getTabBarItemArticle = this.getTabBarItemArticle.bind(this);
       this.state = {
       };
   }
@@ -129,16 +130,47 @@ class BottomTabBarComp extends React.Component {
     return null;
   }
 
+  getTabBarItemArticle = ()=>{  //是否展示 正文 按钮
+    let {formDataRaw} = this.props;
+    let articleItem = (
+      <TabBar.Item
+        title="正文"
+        key="正文"
+        icon={ <Icon type="switcher" style={{fontSize:'0.4rem'}} /> }
+        selectedIcon={<Icon type="switcher" style={{color:'blue', fontSize:'0.4rem'}}/>}
+        selected={this.props.selectedTab === 'articleTab'}
+        onPress={() => this.props.onClickTrackBtn()}
+      >
+      <div></div>
+      </TabBar.Item>
+    );
+    if(formDataRaw){
+      if(this.props.isAddNew){
+        return articleItem;
+      }else if(formDataRaw['btZw'] && formDataRaw['btZw']['visible'] && formDataRaw['btZw']['enable'] ){
+        return articleItem;
+      }else{
+        return null;
+      }
+    }
+    return null;
+  }
+
+
   render() {
     let itemSave = this.getTabBarItemSave();
     let itemVerify = this.getTabBarItemVerify();
     let itemSend = this.getTabBarItemSend();
     let itemTrack = this.getTabBarItemTrack();
+    let itemArticle = this.getTabBarItemArticle();
+
     let arrEles = [];
     itemSave?arrEles.push(itemSave):null;
     itemVerify?arrEles.push(itemVerify):null;
     itemSend?arrEles.push(itemSend):null;
     itemTrack?arrEles.push(itemTrack):null;
+    itemArticle?arrEles.push(itemArticle):null;
+
     return (
       <div>
         <TabBar

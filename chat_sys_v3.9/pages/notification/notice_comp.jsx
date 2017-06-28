@@ -11,7 +11,7 @@ notification.config({
   top: 68,
   duration: 3
 });
-
+//矫正系统的通知公告。
 class NoticeComp extends React.Component {
   constructor(props) {
       super(props);
