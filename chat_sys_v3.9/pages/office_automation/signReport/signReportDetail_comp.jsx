@@ -30,6 +30,7 @@ class SignReportDetail extends React.Component {
         selectedTab:'',
         visible:false,
         curSubTab:'content',
+        historyNotionList:[],
         formData:{}, //经过前端处理的表单数据
         formDataRaw:{}, //没有经过处理的后端返回的表单数据。
       };
@@ -37,6 +38,7 @@ class SignReportDetail extends React.Component {
   componentWillMount(){
     if(this.props.detailInfo && this.props.detailInfo.unid){
       this.getServerFormData();
+      this.getFormVerifyNotion();
     }
   }
   getServerFormData = ()=>{
@@ -52,6 +54,24 @@ class SignReportDetail extends React.Component {
           formData,
           formDataRaw:data.values,
         });
+      },
+      errorCall:(res)=>{
+        //TODO
+      }
+    });
+  }
+  getFormVerifyNotion = ()=>{ //获取历史阅文意见数据。
+    OAUtils.getFormVerifyNotion({
+      tokenunid:this.props.tokenunid,
+      docunid:this.props.detailInfo.unid,
+      successCall: (data)=>{
+        console.log("get 签报管理的历史阅文意见:",data.values.notions);
+        this.setState({
+          historyNotionList:data.values.notions,
+        });
+      },
+      errorCall:(res)=>{
+        //TODO
       }
     });
   }

@@ -250,6 +250,20 @@ export function getVerifyNotionTypes(params) {
   }));
   finalRequestServer(options,param);
 }
+//获取表单历史阅文意见
+export function getFormVerifyNotion(params) {
+  let options = Object.assign({},{
+    url: 'http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
+    moduleUrl: '/openagent?agent=hcit.project.moa.transform.agent.GetHistoryNotionList',
+  },params);
+  let param = encodeURIComponent(JSON.stringify({
+    "ver" : "2",
+    "params" : {
+      "docunid" : options.docunid
+    }
+  }));
+  finalRequestServer(options,param);
+}
 //保存阅文意见
 export function saveVerifyNotion(params) {
   let options = Object.assign({},{

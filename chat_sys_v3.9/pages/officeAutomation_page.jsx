@@ -44,7 +44,7 @@ class LoginRecordPage extends React.Component {
         return {
             tokenunid:'xxxxx', //登录标识id
             open: false,
-            current: '待办事项',
+            current: '收文管理',
             position: 'left',
             loginUserName:'',
         };

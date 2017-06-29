@@ -147,6 +147,10 @@ class DispatchList extends React.Component {
       );
     };
     let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
+      let {dataSource} = this.state;
+      if(this.state.activeTabkey != tabName){
+        dataSource = this.state.dataSource.cloneWithRows([]);
+      }
       return (<TabPane tab={tabName} key={tabName} >
         <Button className="btn" type="primary" style={{margin:"0.16rem"}} onClick={()=>this.onClickAddEdit()}><Icon type="plus" /> 新建</Button>
         <SearchBar placeholder="搜索" />
@@ -154,7 +158,7 @@ class DispatchList extends React.Component {
         {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
         {!this.state.showAdd && !this.state.showDetail ? (
           <ListView
-            dataSource={this.state.dataSource}
+            dataSource={dataSource}
             renderRow={listRow}
             renderSeparator={separator}
             scrollRenderAheadDistance={200}

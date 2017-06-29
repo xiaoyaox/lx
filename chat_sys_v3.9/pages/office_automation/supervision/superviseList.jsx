@@ -143,6 +143,10 @@ class SuperviseList extends React.Component {
       );
     };
     let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
+      let {dataSource} = this.state;
+      if(this.state.activeTabkey != tabName){
+        dataSource = this.state.dataSource.cloneWithRows([]);
+      }
       return (<TabPane tab={tabName} key={tabName} >
         <WhiteSpace />
         <WingBlank>
@@ -153,7 +157,7 @@ class SuperviseList extends React.Component {
         {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
         {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
         {(!this.state.showAdd && !this.state.showDetail)?(<ListView
-          dataSource={this.state.dataSource}
+          dataSource={dataSource}
           renderRow={listRow}
           renderSeparator={separator}
           initialListSize={5}

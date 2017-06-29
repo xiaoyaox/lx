@@ -46,6 +46,11 @@ class ERecordisMobileComp extends React.Component {
         eRecordData:[],
       };
   }
+  onClickOnRow = (data)=>{ //显示新增编辑弹窗。
+    console.log("showAddressBook--AddEditDialog--:");
+    let info = data || {};
+    // this.setState({contactInfo:info, isShowEditDialog:true});
+  }
   componentWillMount(){
     let params = {};
     myWebClient.getServerAddressBook(params,
@@ -97,7 +102,7 @@ class ERecordisMobileComp extends React.Component {
                         {this.state.hasOperaPermission ? (
                           <a href="javascript:;" style={{position:'absolute',top:'0',right:'0'}}>解矫</a>
                         ):null}
-                        <a href="javascript:;" style={{position:'absolute',bottom:'-1.1rem',right:'0'}}>查看</a>
+                        <a href="javascript:;" style={{position:'absolute',bottom:'-1.1rem',right:'0'}} onClick={()=>this.onClickOnRow(record)}>查看</a>
 
                   </div>
               </div>
