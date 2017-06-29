@@ -154,9 +154,34 @@ class NotificationPage extends React.Component {
           }
       });
     }
+    getServerERecordData = (organId,currentIndex)=>{
+      $.post(`${urlPrefix}/android/manager/getRymcList.action`,
+        {
+          organId:organId,
+          currentIndex:currentIndex
+        },(data,state)=>{
+          //这里显示从服务器返回的数据
+          let res = decodeURIComponent(data);
+          try{
+             res = JSON.parse(res);
+          }catch(e){
+          }
+          console.log("矫正系统的获取电子档案的返回---：",res,state);
+          if(res.respCode != "0"){
+            this.state.isMobile ?
+              Toast.info(res.respMsg, 2, null, false):
+              notification.error({message: '矫正系统获取电子档案失败，'+res.respMsg});
+          }else{
+            let values = this.parseServerListData(res.values);
+            this.setState({
+              eRecordData:values || [],
+            });
+          }
+      });
+    }
     parseServerListData = (values)=>{
       for(let i=0;i<values.length;i++){
-        values[i]['key'] = values[i].id;
+        values[i]['key'] = values[i].identity;
       }
       return values;
     }
@@ -173,9 +198,9 @@ class NotificationPage extends React.Component {
         }
         return (<StatisticalAnalysisComp tongjiData={this.state.tongjiData} />);
       }else if(this.state.menuTab==2){ //电子档案
-        // if(this.state.redressOrganId && !this.state.eRecordData){
-        //   this.getServerERecordData(this.state.redressOrganId,1);
-        // }
+        if(this.state.redressOrganId && !this.state.eRecordData){
+          this.getServerERecordData(this.state.redressOrganId,1);
+        }
         return (<ERecordComp eRecordData={this.state.eRecordData} />);
       }
       return null;
@@ -192,7 +217,7 @@ class NotificationPage extends React.Component {
           <div className='notificationPage_drawer'>
             <Drawer
               style={{ minHeight: document.documentElement.clientHeight - 200 }}
-              touch={true} sidebarStyle={{height:'100%',background:'#fff',overflow:'hidden'}}
+              touch={true} sidebarStyle={{height:'100%',background:'#2071a7',zIndex:'12',overflow:'hidden'}}
               contentStyle={{ color: '#A6A6A6'}} sidebar={sidebarMobile}
               {...drawerProps}
             >

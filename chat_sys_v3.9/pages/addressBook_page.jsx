@@ -149,7 +149,7 @@ class AddressBookPage extends React.Component {
           className="address_book_drawer"
           style={{ minHeight: document.documentElement.clientHeight - 200 }}
           touch={true}
-          sidebarStyle={{height:'100%',background:'#fff'}}
+          sidebarStyle={{height:'100%',background:'#2071a7'}}
           contentStyle={{ color: '#A6A6A6'}}
           sidebar={sidebar}
           {...drawerProps} >

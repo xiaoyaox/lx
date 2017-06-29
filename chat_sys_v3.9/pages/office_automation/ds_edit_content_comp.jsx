@@ -1,41 +1,37 @@
 //发文管理--新建
 import $ from 'jquery';
 import React from 'react';
-import * as Utils from 'utils/utils.jsx';
-import myWebClient from 'client/my_web_client.jsx';
+// import * as Utils from 'utils/utils.jsx';
+// import myWebClient from 'client/my_web_client.jsx';
+import UserStore from 'stores/user_store.jsx';
+import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, InputItem, NavBar,
-  TextareaItem,Flex,Steps, TabBar, Picker, List, Toast } from 'antd-mobile';
+  TextareaItem,Flex, TabBar, Picker, List, Toast } from 'antd-mobile';
 
 import { Icon, Select } from 'antd';
 import { createForm } from 'rc-form';
-const Step = Steps.Step;
 
 class DS_EditContentComp extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-        tabName:"content",
+        loginUserName:'',
+        nowDate:moment(new Date()).format('YYYY-MM-DD'),
         flow: [{label: '发文',value: '发文'},{label: '司法局发文流程',value: '司法局发文流程'}],
-        showMainContent: false,
-        showUploadContent: false,
-        showSendContent: false,
-        showFlowContent: false,
         dzTitle: "长沙市司法局文件"
       };
   }
+  componentWillMount(){
+    var me = UserStore.getCurrentUser() || {};
+    this.setState({loginUserName:me.username||''});
+  }
+
 
   shouldComponentUpdate(nextProps){
     if(this.props.formData !== nextProps.formData){
 
     }
     return true;
-  }
-
-  onClickSubTab = (data)=>{
-    // console.log("onClickSubTab-target:",e.target);
-    let tabNameCn = data.replace(/\s+/g,"");
-    let tabNameCn2En = {"发送":"send", "上传附件":"upload", "正文":"article", "查阅附件":"referto"}
-    this.props.afterChangeTabCall(tabNameCn2En[tabNameCn]);
   }
 
   handleChange = (value)=> {
@@ -66,24 +62,6 @@ class DS_EditContentComp extends React.Component {
     }
   }
 
-  renderContent = (pageText)=> {
-    return (
-      <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
-        <div style={{ paddingTop: 60 }}>你已点击“{pageText}” tab， 当前展示“{pageText}”信息</div>
-        <a style={{ display: 'block', marginTop: 40, marginBottom: 600, color: '#108ee9' }}
-          onClick={(e) => {
-            e.preventDefault();
-            this.setState({
-              hidden: !this.state.hidden,
-            });
-          }}
-        >
-          点击切换 tab-bar 显示/隐藏
-        </a>
-      </div>
-    );
-  }
-
   onClickSave = ()=> {
     Toast.info('保存成功!', 1);
     this.props.backToTableListCall();
@@ -103,14 +81,14 @@ class DS_EditContentComp extends React.Component {
         <div className={'oa_detail_cnt'}>
           <div className={'oa_detail_title'} style={{width:'100%',textAlign:'center'}}>{this.state.dzTitle}</div>
           <Flex>
-            <Flex.Item><InputItem placeholder="2017" labelNumber={2}>文号</InputItem></Flex.Item>
-            <Flex.Item><InputItem placeholder="2017" labelNumber={2} type="Number">份数</InputItem></Flex.Item>
+            <Flex.Item><InputItem editable={false} labelNumber={3}>文号：</InputItem></Flex.Item>
+            <Flex.Item><InputItem placeholder="请输入..." labelNumber={3} type="Number">份数：</InputItem></Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div className="select_container">
                 <Picker data={secrecy} cols={1} {...getFieldProps('secrecy')}>
-                  <List.Item arrow="horizontal">密级</List.Item>
+                  <List.Item arrow="horizontal">密级：</List.Item>
                 </Picker>
               </div>
             </Flex.Item>
@@ -123,15 +101,43 @@ class DS_EditContentComp extends React.Component {
             </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item><InputItem placeholder="局长办公室纪要" labelNumber={2}>标题</InputItem></Flex.Item>
-          </Flex>
-          <Flex>
             <Flex.Item>
-              <InputItem placeholder="张三，李四" labelNumber={2}>主送</InputItem>
+              <div className={'detail_textarea_title'}>标题：</div>
+              <div className="textarea_container">
+                <TextareaItem
+                  title=""
+                  rows={3}
+                  placeholder="请输入..."
+                  labelNumber={0}
+                  />
+              </div>
             </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item><InputItem placeholder="张五，李六" labelNumber={2}>抄送</InputItem></Flex.Item>
+            <Flex.Item>
+              <div className={'detail_textarea_title'}>主送：</div>
+              <div className="textarea_container">
+                <TextareaItem
+                  title=""
+                  rows={3}
+                  placeholder="请输入..."
+                  labelNumber={0}
+                  />
+              </div>
+            </Flex.Item>
+          </Flex>
+          <Flex>
+            <Flex.Item>
+              <div className={'detail_textarea_title'}>抄送：</div>
+              <div className="textarea_container">
+                <TextareaItem
+                  title=""
+                  rows={3}
+                  placeholder="请输入..."
+                  labelNumber={0}
+                  />
+              </div>
+            </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
@@ -143,78 +149,52 @@ class DS_EditContentComp extends React.Component {
             </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item><InputItem placeholder="xxxxx" labelNumber={4}>领导签发</InputItem></Flex.Item>
+            <Flex.Item><InputItem editable={false} value="--" labelNumber={5}>领导签发：</InputItem></Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item>
-              <div className={'detail_textarea_title'}>传批意见</div>
-              <div className="textarea_container">
-                <TextareaItem
-                  title=""
-                  autoHeight
-                  labelNumber={0}
-                  />
-              </div>
-            </Flex.Item>
+            <Flex.Item><InputItem editable={false} value="--" labelNumber={5}>传批意见：</InputItem></Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div id="JZYJ">
-                <div className={'detail_textarea_title'}>局长审核意见</div>
-                <div className="textarea_container">
-                  <TextareaItem
-                    title=""
-                    autoHeight
-                    labelNumber={0}
-                  />
-                </div>
+                <InputItem editable={false} value="--" labelNumber={7}>局长审核意见：</InputItem>
               </div>
             </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div id="FGYJ">
-                <div className={'detail_textarea_title'}>分管领导意见</div>
-                <div className="textarea_container">
-                  <TextareaItem title="" autoHeight labelNumber={0} />
-                </div>
+                <InputItem editable={false} value="--" labelNumber={7}>分管领导意见：</InputItem>
               </div>
             </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item>
-              <div className={'detail_textarea_title'}>处室负责人意见</div>
-                <div className="textarea_container">
-                  <TextareaItem
-                    title=""
-                    autoHeight
-                    labelNumber={0}
-                  />
-                </div>
-            </Flex.Item>
+            <Flex.Item><InputItem editable={false} value="--" labelNumber={8}>处室负责人意见：</InputItem></Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div id="HG">
-                <div className={'detail_textarea_title'}>核稿</div>
-                <div className="textarea_container">
-                  <TextareaItem
-                    title=""
-                    autoHeight
-                    labelNumber={0}
-                  />
-                </div>
+                <InputItem editable={false} value="--" labelNumber={3}>核稿：</InputItem>
               </div>
             </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item><InputItem placeholder="xxxxx" labelNumber={4}>拟稿单位</InputItem></Flex.Item>
+            <Flex.Item><InputItem value="148中心"
+              editable={true}
+              labelNumber={5}>拟稿单位：</InputItem>
+            </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item><InputItem placeholder="xxxxx" labelNumber={4}>拟稿人</InputItem></Flex.Item>
+            <Flex.Item><InputItem value={this.state.loginUserName}
+              editable={true}
+              labelNumber={4}>拟稿人：</InputItem>
+          </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item><InputItem placeholder="xxxxx" editable="fasle" labelNumber={4}>日期</InputItem></Flex.Item>
+            <Flex.Item><InputItem value={this.state.nowDate}
+              editable={true}
+              labelNumber={5}>拟稿日期：</InputItem>
+            </Flex.Item>
           </Flex>
         </div>
       </div>

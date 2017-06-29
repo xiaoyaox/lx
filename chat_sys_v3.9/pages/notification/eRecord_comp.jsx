@@ -140,7 +140,7 @@ class ERecordComp extends React.Component {
   render(){
   let echartView=this.state.isMobile ?
   (<ERecordisMobileComp eRecordData={this.props.eRecordData}/>) :
-  (<div id="tongjiChartsMainContaner" style={{height:600,margin:"0 auto",marginTop:30}}></div>);
+  (<ERecordisMobileComp eRecordData={this.props.eRecordData}/>);
     return (
       <div className="notificationdetai_container">
         {echartView}

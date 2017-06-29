@@ -70,6 +70,12 @@ export function formatOrganizationData(dtMap){
   });
   return orgaArr;
 }
+
+//获取发文管理的列表数据。
+export function getIncomingListData(opts){
+  opts['viewname'] = 'hcit.module.swgl.ui.VeSwcld';
+  getOAServerListData(opts);
+}
 //获取发文管理的列表数据
 export function getDispatchListData(opts){
   opts['viewname'] = 'hcit.module.fwgl.ui.VeFwcld';
