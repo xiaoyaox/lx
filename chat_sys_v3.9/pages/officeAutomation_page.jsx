@@ -6,7 +6,6 @@ import UserStore from 'stores/user_store.jsx';
 
 import * as Utils from 'utils/utils.jsx';
 
-// import LogOutComp from './components/log_out_comp.jsx';
 import myWebClient from 'client/my_web_client.jsx';
 import * as OAUtils from 'pages/utils/OA_utils.jsx';
 
@@ -18,20 +17,19 @@ const { Sider } = Layout;
 import PersonalTodoList from './office_automation/personalTodoList.jsx'; //待办事项
 import NoticeList from './office_automation/noticeList.jsx'; //通知公告
 import IncomingList from './office_automation/incomingList.jsx'; //收文管理
-import DispatchList from './office_automation/dispatchList.jsx'; //发文管理
+import DispatchList from './office_automation/dispatch/dispatchList.jsx'; //发文管理
 import SignReportList from './office_automation/signReport/signReportList.jsx'; //签报管理
 import SuperviseList from './office_automation/supervision/superviseList.jsx'; //督办管理
 import NewDispatchList from './office_automation/newDispatchList.jsx'; //最新发文
+import AdministrativeSystemInfos from './office_automation/administrativeSystemInfos.jsx';//司法行政系统信息查询
 
 import OaSiderbarComp from './office_automation/officeAutoSiderbar_comp.jsx';//侧边栏
 
-import DocumentSubmission from './office_automation/documentSubmission.jsx';//公文报送
-import AdministrativeSystemInfos from './office_automation/administrativeSystemInfos.jsx';//工作督查
+// import DocumentSubmission from './office_automation/documentSubmission.jsx';//公文报送
 // import InternalNoticeComp from './office_automation/internalNotice_comp.jsx'; //对内宣传
 // import WorkNoticeComp from './office_automation/workNotice_comp.jsx'; //工作通知
 
 import signup_logo from 'images/signup_logo.png';
-// import logOut_icon from 'images/modules_img/logOut_icon.png';
 
 class LoginRecordPage extends React.Component {
     constructor(props) {

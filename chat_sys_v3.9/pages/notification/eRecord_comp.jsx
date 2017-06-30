@@ -35,96 +35,12 @@ class ERecordComp extends React.Component {
         isMobile: Utils.isMobile(),
       };
   }
-  getChartOptions = (xAxisData,seriesData)=>{
-    return {
-          title: {
-            x: 'center',
-          },
-          tooltip: {
-              trigger: 'item'
-          },
-          // toolbox: {
-          //     show: true,
-          //     feature: {
-          //         dataView: {show: true, readOnly: false},
-          //         restore: {show: true},
-          //         saveAsImage: {show: true}
-          //     }
-          // },
-          calculable: true,
-          grid: {
-              borderWidth: 1,
-              y: 80,
-              y2: 60
-          },
-          xAxis: [
-              {
-                  type: 'category',
-                  show: true,
-                  data: xAxisData
-              }
-          ],
-          yAxis: [
-              {
-                  type: 'value',
-                  show: true
-              }
-          ],
-          series: [
-              {
-                  name: '类型数量',
-                  type: 'bar',
-                  itemStyle: {
-                      normal: {
-                          color: function(params) {
-                              // build a color map as your need.
-                              var colorList = [
-                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                 '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                 '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                              ];
-                              return colorList[params.dataIndex]
-                          },
-                          label: {
-                              show: true,
-                              position: 'top',
-                              formatter: '{b}\n{c}'
-                          }
-                      }
-                  },
-                  data: seriesData
-              }
-          ]
-        };
-  }
   componentWillMount(){
   }
   componentDidMount(){
-
-    if(this.props.tongjiData){
-      this.updateChartData(this.props.tongjiData);
-    }else{
-      this.updateChartData({
-        "hx":"0",
-        "jjrs":"0",
-        "dyrj":"0",
-        "zcrs":"0",
-        "gz":"0",
-        "js":"0",
-        "dyjj":"0",
-        "jwzx":"0",
-        "bddw":"",
-        "bq":"0",
-        "sjdw":"0"
-      });
-    }
   }
   componentWillReceiveProps(nextProps){
-    //获取到新的隶属机构Id时，跟新通知列表数据。
-    if(nextProps.tongjiData){
-      // console.log("componentWillReceiveProps----ERecordComp");
-      this.updateChartData(nextProps.tongjiData);
-    }
+
   }
   updateChartData = (valueObj)=>{
     let tongjiData = {};
@@ -139,8 +55,18 @@ class ERecordComp extends React.Component {
 
   render(){
   let echartView=this.state.isMobile ?
-  (<ERecordisMobileComp eRecordData={this.props.eRecordData}/>) :
-  (<ERecordisMobileComp eRecordData={this.props.eRecordData}/>);
+  (<ERecordisMobileComp
+    eRecordData={this.props.eRecordData}
+    redressOrganId={this.props.redressOrganId}
+    organListData={this.props.organListData}
+    handleSearchDocument={this.props.handleSearchDocument}
+    />) :
+  (<ERecordisMobileComp
+    redressOrganId={this.props.redressOrganId}
+    eRecordData={this.props.eRecordData}
+    organListData={this.props.organListData}
+    handleSearchDocument={this.props.handleSearchDocument}
+    />);
     return (
       <div className="notificationdetai_container">
         {echartView}

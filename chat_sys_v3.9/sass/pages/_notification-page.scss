@@ -26,4 +26,27 @@
     .am-drawer-sidebar{
       background: #2071a7;
     }
+
+}
+.popList{
+  .am-list-item .am-list-line .am-list-content span:nth-child(2),
+  .am-list-item .am-list-line .am-list-content img{
+    float:right;
+  }
+  .am-list-item img{
+    width: 2.44rem;
+    height:2.44rem;
+  }
+  .popup-list{
+    .am-list-body{
+      height:11.2rem;
+      overflow: auto;
+    }
+  }
+}
+
+.eRecordStyle{
+  .am-list-item .am-list-line .am-list-extra{
+    margin-left: -1.3rem;
+  }
 }

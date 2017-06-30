@@ -11,11 +11,19 @@ import * as addressBookUtils from '../utils/addressBook_utils.jsx';
 
 // import myWebClient from 'client/my_web_client.jsx';
 import { Modal,WhiteSpace, SwipeAction, Flex,Button,
-   RefreshControl, ListView,SearchBar,Picker,List,NavBar,DatePicker,InputItem} from 'antd-mobile';
+   RefreshControl, ListView,SearchBar,Picker,List,NavBar,DatePicker,InputItem,Popup} from 'antd-mobile';
 import { Icon,Table} from 'antd';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 const zhNow = moment().locale('zh-cn').utcOffset(8);
+const isIPhone = new RegExp('\\biPhone\\b|\\biPod\\b', 'i').test(window.navigator.userAgent);
+let maskProps;
+if (isIPhone) {
+  // Note: the popup content will not scroll.
+  maskProps = {
+    onTouchStart: e => e.preventDefault(),
+  };
+}
 
 const alert = Modal.alert;
 class ERecordisMobileComp extends React.Component {
@@ -24,6 +32,7 @@ class ERecordisMobileComp extends React.Component {
       let permissionData = UserStore.getPermissionData();
       let hasOperaPermission = permissionData['address_book'].indexOf('action') != -1;
       this.showDeleteConfirmDialog = this.showDeleteConfirmDialog.bind(this);
+      this.onOrganSelectChange = this.onOrganSelectChange.bind(this);
       const dataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
@@ -39,31 +48,72 @@ class ERecordisMobileComp extends React.Component {
         validValue:zhNow,
         publicValue:zhNow,
         dataDepartmentSource:[],
-        sValue:['办公室'],
+        selectOrganId:'',//选中的组织结构的ID数组
         columns:[],
         permissionData:permissionData,
         hasOperaPermission:hasOperaPermission, //是否有操作权限。
-        eRecordData:[],
+        sel: '',
       };
   }
+
+  onClose = (sel) => {
+   this.setState({ sel });
+   Popup.hide();
+  }
+  onClickSearchSubmit = ()=>{
+    this.props.form.validateFields((error, value) => {
+      let params = value || {};
+      params.organId = this.state.selectOrganId;
+      !params.name ? delete params.name : null;
+      !params.telephone ? delete params.telephone : null;
+      console.log("document search form validateFields", error, params);
+      this.props.handleSearchDocument(params||{});
+    });
+  }
   onClickOnRow = (data)=>{ //显示新增编辑弹窗。
-    console.log("showAddressBook--AddEditDialog--:");
-    let info = data || {};
+    console.log(data);
+    Popup.show(<div className='popList'>
+     <List renderHeader={() => (
+       <div style={{ position: 'relative',color:'black',fontSize:'0.4rem'}}>
+         详细档案
+         <span
+           style={{
+             position: 'absolute', right: 3, top: -5,
+           }}
+           onClick={() => this.onClose('cancel')}
+         >
+           <Icon type="cross" />
+         </span>
+       </div>)}
+       className="popup-list"
+     >
+
+     <List.Item key='0'><span>姓名</span><span>{data.name}</span></List.Item>
+     <List.Item key='1'><span>图像</span><img src={data.uploadUrl}/></List.Item>
+     <List.Item key='2'><span>性别</span><span>{data.sex}</span></List.Item>
+     <List.Item key='11'><span>出生日期</span><span>{data.csrq}</span></List.Item>
+     <List.Item key='3'><span>机构名称</span><span>{data.organ}</span></List.Item>
+     <List.Item key='4'><span>身份证号码</span><span>{data.identity}</span></List.Item>
+     <List.Item key='5'><span>矫正开始时间</span><span>{data.startTime}</span></List.Item>
+     <List.Item key='6'><span>矫正结束时间</span><span>{data.endTime}</span></List.Item>
+     {data.manageLevel!=='' ? (
+        <List.Item key='7'><span>管理等级</span><span>{data.manageLevel}</span></List.Item>
+     ):null}
+     <List.Item key='8'><span>人员编号</span><span>{data.rymcId}</span></List.Item>
+     <List.Item key='9'><span>手机号码</span><span>{data.telephone}</span></List.Item>
+     {data.criminal!=='' ? (
+        <List.Item key='10'><span>罪名</span><span>{data.criminal}</span></List.Item>
+     ):null}
+     <List.Item key='12'><span>状态</span><span>{data.status}</span></List.Item>
+     <List.Item key='13'><span>矫正类型</span><span>{data.type}</span></List.Item>
+     <List.Item key='14'><span>解矫文书</span><img src={'http://211.138.238.83:9000/'+data.relieveCorrectionUrl}/></List.Item>
+     <List.Item key='15'><span>档案号</span><span>{data.fileNumber}</span></List.Item>
+     </List>
+   </div>, { animationType: 'slide-up', maskProps, maskClosable: false });
+    //let info = data || {};
     // this.setState({contactInfo:info, isShowEditDialog:true});
   }
   componentWillMount(){
-    let params = {};
-    myWebClient.getServerAddressBook(params,
-      (data,res)=>{
-        let objArr = JSON.parse(res.text);
-        console.log("request server addressbook error res text:",objArr);
-        objArr = addressBookUtils.parseContactsData(objArr);
-        this.setState({"eRecordData":objArr});
-      },(e, err, res)=>{
-        console.log("request server addressbook error info:",err);
-      });
-      console.log("request server addressbook error res text:",this.state.eRecordData);
-
     const columns = [{
       title: '联系人',
       dataIndex: 'Contacts',
@@ -112,108 +162,9 @@ class ERecordisMobileComp extends React.Component {
           )
     }];
     this.setState({columns:columns});
-    OAUtils.getOrganization({
-      tokenunid:this.props.tokenunid,
-      successCall: (data)=>{
-        //console.log("获取OA的组织机构数据：",data);
-        let organizationList = OAUtils.formatOrganizationData(data.values);
-        //console.log("获取OA的组织机构数据：",organizationList);
-        //console.log("获取OA的组织机构数据：",organizationList.length);
-        let dataDepartment=[];
-        for(var i=0;i<=organizationList.length-1;i++){
-          dataDepartment[i]=organizationList[i].commonname;
-        }
-        dataDepartment.splice(dataDepartment.indexOf('暂定'),1);
-        dataDepartment.splice(dataDepartment.indexOf('打印室'),1);
-        dataDepartment.splice(dataDepartment.indexOf(undefined),1);
-        this.setState({
-          dataDepartmentSource:dataDepartment,
-        });
-        //console.log("获取OA的组织机构数据：",this.state.dataDepartmentSource);
-
-        }
-
-    });
-
-    const data = [{
-      key: '1',
-      title:'党委会议纪要',
-      verifState: '拟稿单位:办公室',
-      type: '办理',
-      sendTime:'2017/03/13'
-    }, {
-      key: '2',
-      title:'党委会议纪要',
-      verifState: '拟稿单位:办公室',
-      type: '办理2',
-      sendTime:'2017/06/08'
-    }, {
-      key: '3',
-      title:'党委会议纪要',
-      verifState: '拟稿单位:办公室',
-      type: '办理2',
-      sendTime:'2017/06/15'
-    }];
-    //本地假数据
-    setTimeout(() => {
-      this.setState({
-        listData:data,
-        dataSource: this.state.dataSource.cloneWithRows(data),
-        refreshing: false
-      });
-    }, 1000);
-    //从服务端获取数据。
-    // this.getServerListData();
-  }
-  onRefresh = () => {
-    if(this.state.refreshing){ //如果正在刷新就不用重复刷了。
-      return;
-    }
-    console.log('onRefresh');
-    this.setState({ refreshing: true });
-    //本地假数据
-    setTimeout(() => {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(this.state.listData),
-        refreshing: false
-      });
-    }, 2000);
-    //从服务端获取数据。
-    // this.getServerListData();
-  };
-  getServerListData = ()=>{ //从服务端获取列表数据
-    var param = encodeURIComponent(JSON.stringify({
-			"ver" : "2",
-			"params" : {
-				"key" : 10,
-				"currentpage" : 1,
-				"viewname" : "hcit.module.qbgl.ui.VeCld",
-				"viewcolumntitles" : "文件标题,主办部门,拟稿日期,当前办理人,办理状态"
-			}
-		}));
-    $.ajax({
-				url : this.state.url,
-				data : {
-					"tokenunid" : "7503071114382B3716EAC10A53773B25",
-					"param" : param,
-          "url" : this.state.moduleUrl
-				},
-				async : true,
-				success : (result)=>{
-					var data  = decodeURIComponent(result);
-          data = data.replace(/%20/g, " ");
-					console.log("get server notice list data:",data);
-          if(data.code == "1"){
-            this.setState({
-              listData:data,
-              dataSource: this.state.dataSource.cloneWithRows(data.values),
-              refreshing: false
-            });
-          }
-				}
-			});
 
   }
+
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
     alert('删除', '确定删除么??', [
@@ -224,18 +175,6 @@ class ERecordisMobileComp extends React.Component {
   confirmDelete = (selectedId)=>{ //确认删除
     //TODO.
   }
-  onvalidValueChange = (validValue) => {
-    // console.log('onChange', date);
-    this.setState({
-      validValue,
-    });
-  }
-  onpublicValueChange = (publicValue) => {
-    // console.log('onChange', date);
-    this.setState({
-      publicValue,
-    });
-  }
   handleTabClick = (key)=>{
     this.setState({
       activeTabkey:key
@@ -244,9 +183,24 @@ class ERecordisMobileComp extends React.Component {
   onClickOneRow = (rowData)=>{
     console.log("incomingList click rowData:",rowData);
   }
+  onOrganSelectChange(val){
+    console.log("onOrganSelectChange--:",val);
+    this.setState({
+      selectOrganId:val[0]
+    });
+  }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.redressOrganId && nextProps.redressOrganId!=this.props.redressOrganId){
+      this.setState({selectOrganId:nextProps.redressOrganId});
+    }
+  }
   render() {
+    let selectOrganId = this.state.selectOrganId || this.props.redressOrganId;
+    console.log("selectOrganId--:",selectOrganId);
+    // if(!selectOrganId){
+    //   selectOrganId = this.props.organListData[0]['organId'];
+    // }
     const { columns } = this.state;
-
     const { getFieldProps, getFieldError } = this.props.form;
     const year = [{label: '2014 ',value: '2014 '},{label: '2015 ',value: '2015 '},{label: '2016 ',value: '2016 '},
     {label: '2017 ',value: '2017 '}];
@@ -254,20 +208,12 @@ class ERecordisMobileComp extends React.Component {
     {label: '4 ',value: '4 '},{label: '5 ',value: '5 '},{label: '6 ',value: '6 '},{label: '7 ',value: '7 '},
     {label: '8 ',value: '8 '},{label: '9 ',value: '9 '},{label: '10 ',value: '10 '},{label: '11 ',value: '11 '},
     {label: '12 ',value: '12 '}];
-    // const sponsorDepartment = [{label: '局领导 ',value: '局领导 '},{label: '办公室 ',value: '办公室 '},{label: '戒毒工作管理处 ',value: '戒毒工作管理处 '},
-    // {label: '监狱工作管理处 ',value: '监狱工作管理处 '}];
-    // let sponsorDepartment1 = this.state.dataDepartmentSource.map((departmentName,index)=>{
-    //   [{label: {departmentName},value: {departmentName}}]});
-    //console.log(sponsorDepartment[0].label);
-    let sponsorDepartment = [];
-    for(var i=0;i<=this.state.dataDepartmentSource.length-1;i++){
-      sponsorDepartment.push({label:this.state.dataDepartmentSource[i],
-         value: this.state.dataDepartmentSource[i]});
-      // sponsorDepartment1[i].label=this.state.dataDepartmentSource[i];
-      // sponsorDepartment1[i].value=this.state.dataDepartmentSource[i];
+    let organData = [];
+    for(let i in this.props.organListData){
+      organData.push({label:this.props.organListData[i].organName+'('+this.props.organListData[i].count+')',
+         value: this.props.organListData[i].organId});
     }
-    // console.log(this.state.dataDepartmentSource);
-    // console.log(sponsorDepartment1);
+    // console.log(organData);
     const separator = (sectionID, rowID) => (
       <div
         key={`${sectionID}-${rowID}`}
@@ -286,9 +232,10 @@ class ERecordisMobileComp extends React.Component {
           <Flex>
             <Flex.Item>
               <div style={{borderBottom: '1px solid #ddd',borderTop: '1px solid #ddd'}}>
-                <Picker data={sponsorDepartment} cols={1} value={this.state.sValue}
-                  {...getFieldProps('sponsorDepartment')}>
-                  <List.Item arrow="horizontal">{this.state.dataDepartmentSource[0]}</List.Item>
+                <Picker data={organData} cols={1} value={[selectOrganId]}
+                  onOk={this.onOrganSelectChange}
+                  >
+                  <List.Item arrow="horizontal">组织机构</List.Item>
                 </Picker>
               </div>
             </Flex.Item>
@@ -296,23 +243,25 @@ class ERecordisMobileComp extends React.Component {
           <Flex>
             <Flex.Item>
               <div style={{borderBottom: '1px solid #ddd'}}>
-                  <InputItem
+                  <InputItem clear {...getFieldProps('name')}
                   editable={true} labelNumber={2} placeholder="请输入姓名"><Icon type="user"
-                  style={{color: '#278197',fontSize:'0.6rem'}}/></InputItem>
+                  style={{color: '#278197',fontSize:'0.6rem'}}/>姓名：</InputItem>
               </div>
             </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div style={{borderBottom: '1px solid #ddd'}}>
-                  <InputItem
+                  <InputItem clear {...getFieldProps('telephone')}
                   editable={true} labelNumber={2} placeholder="请输入手机号"><Icon type="phone"
-                  style={{color: '#EF9F2E',fontSize:'0.6rem'}}/></InputItem>
+                  style={{color: '#EF9F2E',fontSize:'0.6rem'}}/>手机号：</InputItem>
               </div>
             </Flex.Item>
           </Flex>
         </div>
-        <Button type="primary" style={{margin:'0 auto',marginTop:'0.1rem',width:'90%',marginBottom:'0.1rem'}}
+        <Button type="primary"
+        onClick={this.onClickSearchSubmit}
+        style={{margin:'0 auto',marginTop:'0.1rem',width:'90%',marginBottom:'0.1rem'}}
         ><Icon type="search" />查询</Button>
       </div>
     );
@@ -323,10 +272,10 @@ class ERecordisMobileComp extends React.Component {
     ;
 
     return (
-      <div className="newDispatchList">
+      <div className="newDispatchList eRecordStyle">
           {multiTabPanels}
 
-          <div className='addressbook_list' style={{width:'100%'}}>
+          <div style={{width:'100%'}}>
             <Table
               columns={columns}
               showHeader={false}

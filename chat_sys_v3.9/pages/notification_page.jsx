@@ -45,6 +45,7 @@ class NotificationPage extends React.Component {
             userId:'',
             organName:'',
             organFlag:'',
+            organListData:[], //矫正的组织结构列表数据。
             loginUserName:'', // 矫正系统里的用户名。
             loginPassword:'', // 矫正系统的用户密码。
             redressOrganId:'', //矫正系统里的组织机构Id.
@@ -100,6 +101,7 @@ class NotificationPage extends React.Component {
                   organName:values.organ,  //隶属机构名
                   organFlag:values.flag,  //隶属机构标识级别。组织机构标识：1、市 2、区 3、县 4、乡镇 5、街道
                 });
+                this.getServerOrganData(values.organId);
               }
               console.log("矫正系统的登录返回---：",res,state);
           }
@@ -109,10 +111,25 @@ class NotificationPage extends React.Component {
       // console.log(args);
       this.setState({ open: !this.state.open });
     }
+    //获取组织机构数据
+    getServerOrganData = (organId)=>{
+      $.get(`${urlPrefix}/android/datb/getAndroidOrgan.action?organId=${organId}`,
+        {},(data,state)=>{
+          let res = decodeURIComponent(data);
+          try{
+             res = JSON.parse(res);
+          }catch(e){
+          }
+          console.log("矫正系统的获取的组织机构返回---：",res,state);
+          if(res.respCode == "0"){
+              let organList = res.values;
+              this.setState({ organListData:organList });
+          }
+      });
+    }
     getServerAnalysisData = (organId,currentIndex)=>{
       $.get(`${urlPrefix}/android/manager/getTongJiList.action?organId=${organId}`,
         {},(data,state)=>{
-          //这里显示从服务器返回的数据
           let res = decodeURIComponent(data);
           try{
              res = JSON.parse(res);
@@ -135,7 +152,6 @@ class NotificationPage extends React.Component {
           organId:organId,
           currentIndex:currentIndex
         },(data,state)=>{
-          //这里显示从服务器返回的数据
           let res = decodeURIComponent(data);
           try{
              res = JSON.parse(res);
@@ -154,13 +170,9 @@ class NotificationPage extends React.Component {
           }
       });
     }
-    getServerERecordData = (organId,currentIndex)=>{
+    getServerERecordData = (params)=>{
       $.post(`${urlPrefix}/android/manager/getRymcList.action`,
-        {
-          organId:organId,
-          currentIndex:currentIndex
-        },(data,state)=>{
-          //这里显示从服务器返回的数据
+        Object.assign({},{currentIndex:1},params),(data,state)=>{
           let res = decodeURIComponent(data);
           try{
              res = JSON.parse(res);
@@ -181,9 +193,13 @@ class NotificationPage extends React.Component {
     }
     parseServerListData = (values)=>{
       for(let i=0;i<values.length;i++){
-        values[i]['key'] = values[i].identity;
+        values[i]['key'] = values[i].id || values[i].identity;
       }
       return values;
+    }
+    handleSearchDocument = (params)=> {
+      this.getServerERecordData(params);
+
     }
 
     getContentElements(){
@@ -199,9 +215,16 @@ class NotificationPage extends React.Component {
         return (<StatisticalAnalysisComp tongjiData={this.state.tongjiData} />);
       }else if(this.state.menuTab==2){ //电子档案
         if(this.state.redressOrganId && !this.state.eRecordData){
-          this.getServerERecordData(this.state.redressOrganId,1);
+          this.getServerERecordData({
+            organId:this.state.redressOrganId,
+            currentIndex:1
+          });
         }
-        return (<ERecordComp eRecordData={this.state.eRecordData} />);
+        return (<ERecordComp
+          redressOrganId={this.state.redressOrganId}
+          organListData={this.state.organListData}
+          eRecordData={this.state.eRecordData}
+          handleSearchDocument={this.handleSearchDocument} />);
       }
       return null;
     }
