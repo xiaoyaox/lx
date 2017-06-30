@@ -2,7 +2,7 @@
 import $ from 'jquery';
 import React from 'react';
 import * as Utils from 'utils/utils.jsx';
-import myWebClient from 'client/my_web_client.jsx';
+// import myWebClient from 'client/my_web_client.jsx';
 import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, NavBar, TabBar} from 'antd-mobile';
 
@@ -30,7 +30,6 @@ class SignReportDetail extends React.Component {
         selectedTab:'',
         visible:false,
         curSubTab:'content',
-        historyNotionList:[],
         formData:{}, //经过前端处理的表单数据
         formDataRaw:{}, //没有经过处理的后端返回的表单数据。
       };
@@ -38,7 +37,6 @@ class SignReportDetail extends React.Component {
   componentWillMount(){
     if(this.props.detailInfo && this.props.detailInfo.unid){
       this.getServerFormData();
-      this.getFormVerifyNotion();
     }
   }
   getServerFormData = ()=>{
@@ -53,21 +51,6 @@ class SignReportDetail extends React.Component {
         this.setState({
           formData,
           formDataRaw:data.values,
-        });
-      },
-      errorCall:(res)=>{
-        //TODO
-      }
-    });
-  }
-  getFormVerifyNotion = ()=>{ //获取历史阅文意见数据。
-    OAUtils.getFormVerifyNotion({
-      tokenunid:this.props.tokenunid,
-      docunid:this.props.detailInfo.unid,
-      successCall: (data)=>{
-        console.log("get 签报管理的历史阅文意见:",data.values.notions);
-        this.setState({
-          historyNotionList:data.values.notions,
         });
       },
       errorCall:(res)=>{
@@ -98,7 +81,7 @@ class SignReportDetail extends React.Component {
 
   render() {
      const {detailInfo} = this.props;
-     const {formData,formDataRaw} = this.state;
+     const {formData,formDataRaw,historyNotionList,attachmentList} = this.state;
 
     //  let clsName = this.props.isShow && !this.state.isHide?
     //  'oa_detail_container ds_detail_container oa_detail_container_show':
@@ -119,6 +102,8 @@ class SignReportDetail extends React.Component {
             (
               <DetailContentComp
               activeTabkey={this.props.activeTabkey}
+              moduleNameCn={this.state.moduleNameCn}
+              tokenunid={this.props.tokenunid}
               formData={formData}
               formDataRaw={formDataRaw}
               detailInfo={detailInfo} />

@@ -284,6 +284,49 @@ export function saveVerifyNotion(params) {
   finalRequestServer(options,param);
 }
 
+//获取表单附件列表。
+export function getFormAttachmentList(params){
+  const moduleName2filetablename = {
+    "签报管理":"qbgl_gwfj",
+    "发文管理":"fwgl_gwfj",
+    "收文管理":"swgl_gwfj",
+    "督办管理":"duban3_gwfj"
+  }
+  let options = Object.assign({},{
+    url: 'http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
+    moduleUrl:'/openagent?agent=hcit.project.moa.transform.agent.GetGwFjList',
+    // moduleUrl: '/openagent?agent=hcit.project.moa.transform.agent.GetFlowSendDoc', //模块url
+  },params);
+  let param = encodeURIComponent(JSON.stringify({
+    "ver" : "2",
+    "params" : {
+      "docunid" : options.docunid,
+      "filetablename" : moduleName2filetablename[options.moduleName] //该值来源于请求的表单数据：flowsessionid
+    }
+  }));
+  finalRequestServer(options,param);
+}
+//获取表单附件下载地址。
+export function getAttachmentUrl(params){
+  let url='';
+  var strUrl = "http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.GetGwfjData";
+  const moduleName2filetablename = {
+    "签报管理":"qbgl_gwfj",
+    "发文管理":"fwgl_gwfj",
+    "收文管理":"swgl_gwfj",
+    "督办管理":"duban3_gwfj"
+  };
+  var paramJson ={
+      ver : "2",
+      params :{
+          "fileunid" : params.fileunid,
+          "filetablename" : moduleName2filetablename[params.moduleName]
+      }
+  };
+  url = strUrl + "&param=" + encodeURIComponent(JSON.stringify(paramJson));
+  return url;
+}
+
 //获取办文跟踪信息
 export function getDoArticleTrack(params) {
   let options = Object.assign({},{

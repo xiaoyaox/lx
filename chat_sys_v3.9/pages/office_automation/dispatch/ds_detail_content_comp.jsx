@@ -2,6 +2,8 @@ import $ from 'jquery';
 import React from 'react';
 // import * as Utils from 'utils/utils.jsx';
 // import myWebClient from 'client/my_web_client.jsx';
+import * as OAUtils from 'pages/utils/OA_utils.jsx';
+import UserStore from 'stores/user_store.jsx';
 import { WingBlank, WhiteSpace, Button, InputItem,
   TextareaItem, Flex, TabBar, Picker, List, Toast } from 'antd-mobile';
 
@@ -14,15 +16,59 @@ class DS_DetailContentComp extends React.Component {
       super(props);
       this.state = {
         flow: [{label: '发文',value: '发文'},{label: '司法局发文流程',value: '司法局发文流程'}],
+        historyNotionList:[],
+        attachmentList:[],  //附件列表
       };
   }
-
-  // onClickSubTab = (data)=>{
-  //   let tabNameCn = data.replace(/\s+/g,"");
-  //   let tabNameCn2En = {"发送":"send", "上传附件":"upload", "正文":"article", "查阅附件":"referto"}
-  //   this.props.afterChangeTabCall(tabNameCn2En[tabNameCn]);
-  // }
+  componentWillMount(){
+    var me = UserStore.getCurrentUser() || {};
+    this.setState({loginUserName:me.username||''});
+    if(this.props.detailInfo && this.props.detailInfo.unid){
+      this.getFormVerifyNotion();
+      this.getFormAttachmentList();
+    }
+  }
+  getFormVerifyNotion = ()=>{ //获取历史阅文意见数据。
+    OAUtils.getFormVerifyNotion({
+      tokenunid:this.props.tokenunid,
+      docunid:this.props.detailInfo.unid,
+      successCall: (data)=>{
+        console.log("get 发文管理的历史阅文意见:",data.values.notions);
+        this.setState({
+          historyNotionList:data.values.notions,
+        });
+      },
+      errorCall:(res)=>{
+        //TODO
+      }
+    });
+  }
+  getFormAttachmentList = ()=>{
+    OAUtils.getFormAttachmentList({
+      tokenunid:this.props.tokenunid,
+      docunid:this.props.detailInfo.unid,
+      moduleName:this.props.moduleNameCn,
+      successCall: (data)=>{
+        console.log("get 发文管理的附件列表:",data);
+        this.setState({
+          attachmentList:data.values.filelist || [],
+        });
+      }
+    });
+  }
+  getAttachmentListEle = (attachmentList)=>{
+    return attachmentList.map((item,index)=>{
+      let downloadUrl = OAUtils.getAttachmentUrl({
+        fileunid:item.unid,
+        moduleName:this.props.moduleNameCn
+      });
+      return (
+        <div key={index} style={{marginLeft:'0.3rem'}}><a href={downloadUrl} data-unid={item.unid}>{item.attachname}</a><br/></div>
+      );
+    });
+  }
   render() {
+    const {attachmentList} = this.state;
     const { detailInfo, formData, formDataRaw , tokenunid, modulename } = this.props;
     const { getFieldProps, getFieldError } = this.props.form;
     const secrecy = [{label: '秘密',value: '秘密'},{label: '机密',value: '机密'}];
@@ -55,7 +101,17 @@ class DS_DetailContentComp extends React.Component {
             </Flex.Item>
           </Flex>
           <Flex>
-            <Flex.Item><InputItem value={detailInfo.fileTitle} labelNumber={2}>标题</InputItem></Flex.Item>
+            <Flex.Item>
+              <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>标题：</div>
+              <TextareaItem
+                {...getFieldProps('subjectTitle',{
+                  initialValue: detailInfo.fileTitle,
+                })}
+                title=""
+                rows={3}
+                labelNumber={0}
+              />
+            </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
@@ -74,6 +130,25 @@ class DS_DetailContentComp extends React.Component {
               </div>
             </Flex.Item>
           </Flex>
+
+          <WhiteSpace size='md' style={{borderBottom:'1px solid #c7c3c3',marginTop:'0.1rem'}}/>
+          <Flex>
+            <Flex.Item>
+              <form enctype="multipart/form-data" action="" method="post">
+                  <input type="file" name="file" id="choosefile" style={{display:'inline-block'}}/>
+                  <input type="submit" value="上传附件" id="submitBtn" style={{color:'black'}}/>
+              </form>
+            </Flex.Item>
+          </Flex>
+          <Flex>
+            <Flex.Item>
+              <div style={{margin:'0.2rem 0 0 0.3rem',color:'black'}}>附件列表：{attachmentList.length<=0?(<span>无附件</span>):null}</div>
+              { this.state.attachmentList.length>0?
+                (this.getAttachmentListEle(this.state.attachmentList)):null
+              }
+            </Flex.Item>
+          </Flex>
+
           <Flex>
             <Flex.Item><InputItem placeholder="--" labelNumber={4}>领导签发</InputItem></Flex.Item>
           </Flex>

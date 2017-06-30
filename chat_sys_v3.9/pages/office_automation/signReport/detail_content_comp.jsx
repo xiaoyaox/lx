@@ -5,7 +5,8 @@ import UserStore from 'stores/user_store.jsx';
 import moment from 'moment';
 import { createForm } from 'rc-form';
 
-import myWebClient from 'client/my_web_client.jsx';
+// import myWebClient from 'client/my_web_client.jsx';
+import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, InputItem, NavBar,
   TextareaItem,Flex,List,Picker} from 'antd-mobile';
 
@@ -17,15 +18,59 @@ class DetailContentCompRaw extends React.Component {
       this.state = {
         loginUserName:'',
         nowDate:moment(new Date()).format('YYYY-MM-DD'),
-        tabName:"content",
+        historyNotionList:[],
+        attachmentList:[],  //附件列表
       };
   }
   componentWillMount(){
     var me = UserStore.getCurrentUser() || {};
     this.setState({loginUserName:me.username||''});
+    if(this.props.detailInfo && this.props.detailInfo.unid){
+      this.getFormVerifyNotion();
+      this.getFormAttachmentList();
+    }
   }
-
+  getFormVerifyNotion = ()=>{ //获取历史阅文意见数据。
+    OAUtils.getFormVerifyNotion({
+      tokenunid:this.props.tokenunid,
+      docunid:this.props.detailInfo.unid,
+      successCall: (data)=>{
+        console.log("get 签报管理的历史阅文意见:",data.values.notions);
+        this.setState({
+          historyNotionList:data.values.notions,
+        });
+      },
+      errorCall:(res)=>{
+        //TODO
+      }
+    });
+  }
+  getFormAttachmentList = ()=>{
+    OAUtils.getFormAttachmentList({
+      tokenunid:this.props.tokenunid,
+      docunid:this.props.detailInfo.unid,
+      moduleName:this.props.moduleNameCn,
+      successCall: (data)=>{
+        console.log("get 签报管理的附件列表:",data);
+        this.setState({
+          attachmentList:data.values.filelist || [],
+        });
+      }
+    });
+  }
+  getAttachmentListEle = (attachmentList)=>{
+    return attachmentList.map((item,index)=>{
+      let downloadUrl = OAUtils.getAttachmentUrl({
+        fileunid:item.unid,
+        moduleName:this.props.moduleNameCn
+      });
+      return (
+        <div key={index}><a href={downloadUrl} data-unid={item.unid}>{item.attachname}</a><br/></div>
+      );
+    });
+  }
   render() {
+    const {attachmentList} = this.state;
     const { getFieldProps } = this.props.form;
     const {detailInfo, formData, formDataRaw} = this.props;
     let items = formDataRaw.gwlc?formDataRaw.gwlc.items:[];
@@ -74,6 +119,24 @@ class DetailContentCompRaw extends React.Component {
               </List>
             </Flex.Item>
           </Flex>
+
+          <Flex>
+            <Flex.Item>
+              <form enctype="multipart/form-data" action="" method="post">
+                  <input type="file" name="file" id="choosefile" style={{display:'inline-block'}}/>
+                  <input type="submit" value="上传附件" id="submitBtn" style={{color:'black'}}/>
+              </form>
+            </Flex.Item>
+          </Flex>
+          <Flex>
+            <Flex.Item>
+              <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>附件列表：{attachmentList.length<=0?(<span>无附件</span>):null}</div>
+              { this.state.attachmentList.length>0?
+                (this.getAttachmentListEle(this.state.attachmentList)):null
+              }
+            </Flex.Item>
+          </Flex>
+
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>领导批示：</div>

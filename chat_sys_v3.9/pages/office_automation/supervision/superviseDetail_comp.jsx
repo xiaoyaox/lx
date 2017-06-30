@@ -91,6 +91,7 @@ class SuperviseDetail extends React.Component {
             (
               <DetailContentComp
                 activeTabkey={this.props.activeTabkey}
+                moduleNameCn={this.state.moduleNameCn}
                 formData={formData}
                 formDataRaw={formDataRaw}
                 detailInfo={detailInfo} />

@@ -17,33 +17,60 @@ class DetailContentCompRaw extends React.Component {
       this.state = {
         loginUserName:'',
         nowDate:moment(new Date()).format('YYYY-MM-DD'),
-        tabName:"content",
+        historyNotionList:[],
+        attachmentList:[],
       };
   }
   componentWillMount(){
     var me = UserStore.getCurrentUser() || {};
     this.setState({loginUserName:me.username||''});
-  }
-  beforeUploadCall(file) {
-    // console.log('file beforeUploadCall :',file);
-    let fileNameSplit = file.name.split('.');
-    if(fileNameSplit[fileNameSplit.length-1] != "xlsx" && fileNameSplit[fileNameSplit.length-1] != "xls"){
-      // this.props.openNotification('info', '只能上传excel文档');
-      return false;
+    if(this.props.detailInfo && this.props.detailInfo.unid){
+      this.getFormVerifyNotion();
+      this.getFormAttachmentList();
     }
-    return true;
   }
-  fileUploadChange(obj) {
-    // console.log('file upload change', obj);
-    if(obj.file.status == "done" && obj.file.response == "success"){
-      // this.props.openNotification('success', '档案导入成功');
-      this.props.handleSearch();
-    } else if (obj.file.status == "error") {
-      // this.props.openNotification('error', '档案导入失败');
-    }
+  getFormVerifyNotion = ()=>{ //获取历史阅文意见数据。
+    OAUtils.getFormVerifyNotion({
+      tokenunid:this.props.tokenunid,
+      docunid:this.props.detailInfo.unid,
+      successCall: (data)=>{
+        console.log("get 督办管理的历史阅文意见:",data.values.notions);
+        this.setState({
+          historyNotionList:data.values.notions,
+        });
+      },
+      errorCall:(res)=>{
+        //TODO
+      }
+    });
+  }
+  getFormAttachmentList = ()=>{
+    OAUtils.getFormAttachmentList({
+      tokenunid:this.props.tokenunid,
+      docunid:this.props.detailInfo.unid,
+      moduleName:this.props.moduleNameCn,
+      successCall: (data)=>{
+        console.log("get 督办管理的附件列表:",data);
+        this.setState({
+          attachmentList:data.values.filelist || [],
+        });
+      }
+    });
+  }
+  getAttachmentListEle = (attachmentList)=>{
+    return attachmentList.map((item,index)=>{
+      let downloadUrl = OAUtils.getAttachmentUrl({
+        fileunid:item.unid,
+        moduleName:this.props.moduleNameCn
+      });
+      return (
+        <div key={index}><a href={downloadUrl} data-unid={item.unid}>{item.attachname}</a><br/></div>
+      );
+    });
   }
 
   render() {
+    const {attachmentList} = this.state;
     const { getFieldProps } = this.props.form;
     const {detailInfo, formData, formDataRaw} = this.props;
     let items = formDataRaw.gwlc?formDataRaw.gwlc.items:[];
@@ -66,15 +93,6 @@ class DetailContentCompRaw extends React.Component {
         value:"督办B"
       }
     ];
-    const uploadField = {
-      name: 'file',
-      action: '',
-      headers:myWebClient.defaultHeaders,
-      showUploadList:false,
-      accept: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      beforeUpload: this.beforeUploadCall,
-      onChange: this.fileUploadChange
-    }
     return (
       <div>
         <div className={'oa_detail_cnt'}>
@@ -148,35 +166,38 @@ class DetailContentCompRaw extends React.Component {
             </Flex.Item>
           </Flex>
           <WhiteSpace size='md' style={{borderBottom:'1px solid #c7c3c3',marginBottom:'0.1rem'}}/>
-          <Flex>
-            <Flex.Item>
-              <Upload {...uploadField} className={'uploadContainer'} style={{width:'80%',margin:'0 auto'}}>
-               <Button>
-                 <Icon type="upload" /> 上传正文
-               </Button>
-              </Upload>
-            </Flex.Item>
-          </Flex>
+            <Flex>
+              <Flex.Item>
+                <form enctype="multipart/form-data" action="" method="post">
+                    <input type="file" name="file" id="choosefile" style={{display:'inline-block'}}/>
+                    <input type="submit" value="上传正文" id="submitBtn" style={{color:'black'}}/>
+                </form>
+              </Flex.Item>
+            </Flex>
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>正文列表：</div>
             </Flex.Item>
           </Flex>
           <WhiteSpace size='md' style={{borderBottom:'1px solid #c7c3c3',marginBottom:'0.1rem'}}/>
+
           <Flex>
             <Flex.Item>
-              <Upload {...uploadField} className={'uploadContainer'} style={{width:'80%',margin:'0 auto'}}>
-               <Button>
-                 <Icon type="upload" /> 上传附件
-               </Button>
-              </Upload>
+              <form enctype="multipart/form-data" action="" method="post">
+                  <input type="file" name="file" id="choosefile" style={{display:'inline-block'}}/>
+                  <input type="submit" value="上传附件" id="submitBtn" style={{color:'black'}}/>
+              </form>
             </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
-              <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>附件列表：</div>
+              <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>附件列表：{attachmentList.length<=0?(<span>无附件</span>):null}</div>
+              { this.state.attachmentList.length>0?
+                (this.getAttachmentListEle(this.state.attachmentList)):null
+              }
             </Flex.Item>
           </Flex>
+
           <WhiteSpace size='md' style={{borderBottom:'1px solid #c7c3c3',marginBottom:'0.1rem'}}/>
           <Flex>
             <Flex.Item>

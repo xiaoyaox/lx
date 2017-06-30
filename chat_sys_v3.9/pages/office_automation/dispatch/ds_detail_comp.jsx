@@ -4,6 +4,7 @@ import React from 'react';
 // import * as Utils from 'utils/utils.jsx';
 import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, NavBar, TabBar, Toast } from 'antd-mobile';
+import {Icon} from 'antd';
 
 import DS_DetailContentComp from './ds_detail_content_comp.jsx';
 import BottomTabBarComp from '../signReport/bottomTabBar_comp.jsx';
@@ -59,19 +60,6 @@ class DS_DetailComp extends React.Component {
     }
     // setTimeout(()=>this.props.backToTableListCall(),1000);
   }
-  onClickCancelBack = ()=>{
-    let {subTabsArr} = this.state;
-    // subTabsArr.pop();
-    // let curSubTab = subTabsArr[subTabsArr.length-1];
-    // this.setState({curSubTab:curSubTab});
-    // if(!curSubTab){
-    //   // this.props.backToTableListCall();
-    //   this.setState({
-    //     subTabsArr:["","content"],
-    //     curSubTab:"content",
-    //   });
-    // }
-  }
   onBackDetailCall = ()=>{
     this.setState({curSubTab:'content'});
   }
@@ -125,6 +113,7 @@ class DS_DetailComp extends React.Component {
           {this.state.curSubTab == "content" ?
             (<DS_DetailContentComp
               tokenunid={this.props.tokenunid}
+              moduleNameCn={this.state.moduleNameCn}
               detailInfo={detailInfo}
               formData={formData}
               formDataRaw={this.state.formDataRaw}
