@@ -99,6 +99,7 @@ class LoginRecordPage extends React.Component {
 
     getBody(){
       return this.state.isAdmin ? (<AdminLoginRecordComp />) : (<UserLoginRecordComp />);
+      //return false ? (<AdminLoginRecordComp />) : (<UserLoginRecordComp />);
     }
 
     getPCElements(sidebar){

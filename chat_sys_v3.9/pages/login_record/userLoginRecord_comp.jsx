@@ -60,7 +60,7 @@ class UserLoginRecordComp extends React.Component {
             console.log("获取用户登录记录数据成功-- data text:",data);
             console.log("获取用户登录记录数据成功-- res text:",res);
             const records = array.map((item) => {
-              const time = moment(new Date(item)).format('YYYY-M-D');
+              const time = moment(new Date(item)).format('LL');
               return time;
             });
             this.setState({recordData: records});
@@ -75,8 +75,12 @@ class UserLoginRecordComp extends React.Component {
     }
 
     setRecordStatus(records) {
+
+
       if (records) {
+
         const cells = $('.ant-fullcalendar-table').find('.ant-fullcalendar-cell');
+
         cells.map((i, cell) => {
           if($(cell).hasClass('cell-record')) {
             $(cell).removeClass('cell-record');
@@ -92,10 +96,15 @@ class UserLoginRecordComp extends React.Component {
 
     setSelectRecordStatus(record) {
       const {recordData} = this.state;
+      console.log(record && recordData.indexOf(time) > -1);
       const time = record.format('YYYY-M-D');
       if (record && recordData.indexOf(time) > -1) {
         const cells = $('.ant-fullcalendar-table').find('.ant-fullcalendar-cell');
+        console.log(cells);
+
         cells.map((i, cell) => {
+          console.log(time == cell.title);
+
           if (time == cell.title) {
             $(cell).addClass('cell-record');
           }
