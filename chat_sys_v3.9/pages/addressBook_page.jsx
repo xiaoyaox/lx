@@ -128,7 +128,7 @@ class AddressBookPage extends React.Component {
       this.setState({contactInfo:info, isShowEditDialog:true});
     }
     closeAddEditDialog = ()=> {   // 隐藏新增Or编辑的弹窗。
-      this.setState({ isShowEditDialog: false });
+      this.setState({ contactInfo:{}, isShowEditDialog: false });
     }
     afterAddEditContactsCall = ()=>{ //新增编辑成功后更新列表。
       this.onSubmitSearch();

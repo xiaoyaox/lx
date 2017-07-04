@@ -22,10 +22,10 @@ class NoticeList extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
       this.state = {
-        url:'http://ip:port/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
-        moduleUrl:'/openagent?agent=hcit.project.moa.transform.agent.MobileViewWork', //模块url,当前是通知通告模块
         tabsArr:["所有", "待审核", "已通过", "未通过"],
         activeTabkey:'所有',
+        colsNameCn:["拟稿日期", "文件标题", "主办部门", "当前办理人"],
+        colsNameEn:["draftDate", "fileTitle", "department", "curUsers"],
         currentpage:1, //当前页码。
         totalPageCount:1, //总页数。
         isLoading:false, //是否在加载列表数据。
@@ -37,17 +37,12 @@ class NoticeList extends React.Component {
       };
   }
   componentWillMount(){
-    //本地假数据
-    this.setState({
-      listData:[],
-      dataSource: this.state.dataSource.cloneWithRows([])
-    });
     //从服务端获取数据。
-    // this.getServerListData();
+    this.getServerListData(this.state.activeTabkey,this.state.currentpage);
   }
   getServerListData = (keyName,currentpage)=>{ //从服务端获取列表数据
     this.setState({isLoading:true});
-    OAUtils.getSuperviseListData({
+    OAUtils.getNoticeListData({
       tokenunid: this.props.tokenunid,
       currentpage:currentpage,
       keyName:keyName,

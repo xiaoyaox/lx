@@ -121,11 +121,11 @@ class SearchFormPC extends React.Component {
           {this.props.currentFileSubType == '律师'?
             (
               <a type="button" className="btn btn-info" style={{ marginLeft: '10px' }}
-                href={"http://"+window.serverUrl+"/modle/LawyerFile.xlsx"}><Icon type="download" /> 下载模板(律师)</a>
+                href={window.serverUrl+"/modle/LawyerFile.xlsx"}><Icon type="download" /> 下载模板(律师)</a>
             ):
             (
               <a type="button" className="btn btn-info" style={{ marginLeft: '10px' }}
-                href={"http://"+window.serverUrl+"/modle/personnelFiles.xlsx"}><Icon type="download" /> 下载模板(人事)</a>
+                href={window.serverUrl+"/modle/personnelFiles.xlsx"}><Icon type="download" /> 下载模板(人事)</a>
             )
           }
         </FormItem>) : null}

@@ -116,7 +116,7 @@ class AddressSearchComp extends React.Component {
                     </Upload>
                     <a type="button" className="btn btn-info"
                       style={{ marginLeft: '20px' }}
-                       href={"http://"+window.serverUrl+"/modle/contacts.xlsx"}>下载模板</a></span>):null}
+                       href={window.serverUrl+"/modle/contacts.xlsx"}>下载模板</a></span>):null}
                   </FormItem>
                 </Col>
 

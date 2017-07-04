@@ -49,7 +49,8 @@ export default class SidebarHeader extends React.Component {
 
         this.refs.dropdown.toggleDropdown();
     }
-    onClickBackToModules() {
+    onClickBackToModules(e) {
+      console.log("点击了群聊的sidebar_header。",e);
       browserHistory.push('/modules');
     }
 
@@ -102,9 +103,9 @@ export default class SidebarHeader extends React.Component {
         }
 
         return (
-            <div className='team__header theme' style={{padding: "0px"}}>
+            <div className='team__header theme' style={{padding: "0px"}} onClick={this.onClickBackToModules}>
                 {tutorialTip}
-                <div className='custom_ant_header' onClick={this.onClickBackToModules}>
+                <div className='custom_ant_header'  onTap={this.onClickBackToModules}>
                     <div className="custom_ant_header_logo chat_header_logo"  style={{marginLeft: "0px", background: "#3f84af"}}>
                       <span className="logo_icon" style={{paddingLeft: "20px"}}><img width="40" height="40" src={signup_logo}/></span>
                       <div className="logo_title">
