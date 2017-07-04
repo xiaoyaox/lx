@@ -104,15 +104,14 @@ export default class SidebarHeader extends React.Component {
         return (
             <div className='team__header theme' style={{padding: "0px"}}>
                 {tutorialTip}
-                <div className='custom_ant_header'>
-                    <div className="custom_ant_header_logo addressbook_logo" onClick={this.onClickBackToModules} style={{marginLeft: "0px", background: "#3f84af"}}>
+                <div className='custom_ant_header' onClick={this.onClickBackToModules}>
+                    <div className="custom_ant_header_logo chat_header_logo"  style={{marginLeft: "0px", background: "#3f84af"}}>
                       <span className="logo_icon" style={{paddingLeft: "20px"}}><img width="40" height="40" src={signup_logo}/></span>
                       <div className="logo_title">
                         <p style={{margin: "0px"}}>{'@' + me.username}</p>
                         <p style={{margin: "0px"}}>司法E通</p>
                       </div>
                     </div>
-
                 </div>
                 {/*<div>
                     {profilePicture}

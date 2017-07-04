@@ -57,7 +57,9 @@ class LoginRecordPage extends React.Component {
     onClickBackToModules(){
       browserHistory.push('/modules');
     }
-
+    handleMenuClick = (item)=>{
+      this.setState({current:item.key, open:!this.state.open});
+    }
     componentWillMount() {
       var me = UserStore.getCurrentUser() || {};
       this.setState({loginUserName:me.username || ''});
@@ -138,7 +140,7 @@ class LoginRecordPage extends React.Component {
           mode="inline"
           style={{ width: 246}}
           selectedKeys={[this.state.current]}
-          onClick={this.handleClick}
+          onClick={this.handleMenuClick}
         >
         <Menu.Item key="1" style={{fontSize:'18px'}}><Icon type="file" />登录签到</Menu.Item>
         </Menu>
@@ -151,6 +153,7 @@ class LoginRecordPage extends React.Component {
           theme="dark"
           mode="inline"
           style={{ width: 240}}
+          selectedKeys={[this.state.current]}
         >
             <Menu.Item key="1"><Icon type="calendar" />登录签到</Menu.Item>
         </Menu>

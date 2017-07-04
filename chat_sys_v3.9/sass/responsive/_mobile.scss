@@ -1043,6 +1043,9 @@
         @include translate3d(-290px, 0, 0);
         border: none;
         width: 290px;
+        .custom_ant_header .custom_ant_header_logo.chat_header_logo{
+          width:290px;
+        }
 
         &.sidebar--padded {
             padding-top: 0;
@@ -1639,6 +1642,9 @@
     .sidebar--left {
         @include translate3d(-260px, 0, 0);
         width: 260px;
+        .custom_ant_header .custom_ant_header_logo.chat_header_logo{
+          width:260px;
+        }
 
         .nav-pills__unread-indicator {
             width: 230px;
@@ -1681,7 +1687,9 @@
     .multi-teams {
         .sidebar--left {
             width: 240px;
-
+            .custom_ant_header .custom_ant_header_logo.chat_header_logo{
+              width:240px;
+            }
             .nav-pills__unread-indicator {
                 width: 190px;
             }

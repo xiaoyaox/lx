@@ -70,20 +70,27 @@ class DocumentPage extends React.Component {
     let _this = this;
     var me = UserStore.getCurrentUser() || {};
     this.setState({loginUserName:me.username || ''});
-    this.getFileDepartment(me.organizations,(firstDepart)=>{
+    this.getFileDepartment(me.organizations,(firstDepart,departmentData)=>{
       this.setState({
         currentFileSubType:firstDepart
       });
-      this.handleSearch({
+      let params = {
         fileInfoType:this.state.currentFileType,
         fileInfoSubType:firstDepart
+      }
+      let department = [];
+      departmentData.map((parent) => {
+        if(parent.resourceName == firstDepart){
+          parent.sub.map((item) => {
+            department.push(item.resourceName);
+          });
+        }
       });
+      department.length >0 ? params.department = department.join(',') : null;
+      this.handleSearch(params);
     });
-    // $('body').addClass('app__body');
-
   }
   componentWillUnmount() {
-
   }
   handleSearch(param) {
     let _param = {};
@@ -167,7 +174,7 @@ class DocumentPage extends React.Component {
           const resource = this.convertSiderData(result);
           // console.log("departmentData-档案管理-权限部门数据-:",resource);
           this.setState({departmentData: resource});
-          callback && callback(resource[0]['resourceName']);
+          callback && callback(resource[0]['resourceName'],resource);
         }
       },
       (e, err, res) => {

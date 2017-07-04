@@ -64,7 +64,7 @@ class NotificationPage extends React.Component {
       }else if(item.key==3){
         this.setState({  current: "3",menuTab:2});
       }
-
+      this.setState({open:!this.state.open});
     }
     onClickBackToModules(){
       browserHistory.push('/modules');
@@ -245,7 +245,7 @@ class NotificationPage extends React.Component {
               style={{ minHeight: document.documentElement.clientHeight - 200 }}
               touch={true}
               sidebarStyle={{height:'100%',background:'#2071a7',zIndex:'12',overflow:'hidden'}}
-              contentStyle={{ color: '#A6A6A6'}} 
+              contentStyle={{ color: '#A6A6A6'}}
               sidebar={sidebarMobile}
               {...drawerProps}
             >
