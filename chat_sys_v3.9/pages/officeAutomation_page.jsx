@@ -15,7 +15,7 @@ const { SubMenu } = Menu;
 const { Sider } = Layout;
 
 import PersonalTodoList from './office_automation/personalTodoList.jsx'; //待办事项
-import NoticeList from './office_automation/noticeList.jsx'; //通知公告
+import NoticeList from './office_automation/notice/noticeList.jsx'; //通知公告
 import IncomingList from './office_automation/incomingList.jsx'; //收文管理
 import DispatchList from './office_automation/dispatch/dispatchList.jsx'; //发文管理
 import SignReportList from './office_automation/signReport/signReportList.jsx'; //签报管理
@@ -47,6 +47,14 @@ class LoginRecordPage extends React.Component {
             loginUserName:'',
         };
     }
+    componentWillMount() {
+      var me = UserStore.getCurrentUser() || {};
+      this.setState({loginUserName:me.username || ''});
+      OAUtils.loginOASystem({oaUserName:me.oaUserName,oaPassword:me.oaPassword}, (res)=>{ //登录OA系统获取认证id。
+        console.log("get OA login res:",res);
+        this.setState({tokenunid:res.values.tockenunid});
+      });
+    }
     onNavBarLeftClick = (e) => {
         browserHistory.push('/');
     }
@@ -63,14 +71,6 @@ class LoginRecordPage extends React.Component {
     }
     onClickBackToModules(){
       browserHistory.push('/modules');
-    }
-    componentWillMount() {
-      var me = UserStore.getCurrentUser() || {};
-      this.setState({loginUserName:me.username || ''});
-      OAUtils.loginOASystem({}, (res)=>{ //登录OA系统获取认证id。
-        console.log("get OA login res:",res);
-        this.setState({tokenunid:res.values.tockenunid});
-      });
     }
     getContentElements(){
       let content = null;

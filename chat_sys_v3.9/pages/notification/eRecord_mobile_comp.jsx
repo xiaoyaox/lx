@@ -1,21 +1,10 @@
 //电子档案手机界面
 import $ from 'jquery';
 import React from 'react';
-import UserStore from 'stores/user_store.jsx';
-
-import * as Utils from 'utils/utils.jsx';
 import { createForm } from 'rc-form';
-import * as OAUtils from 'pages/utils/OA_utils.jsx';
-import myWebClient from 'client/my_web_client.jsx';
-import * as addressBookUtils from '../utils/addressBook_utils.jsx';
-
-// import myWebClient from 'client/my_web_client.jsx';
-import { Modal,WhiteSpace, SwipeAction, Flex,Button,
-   RefreshControl, ListView,SearchBar,Picker,List,NavBar,DatePicker,InputItem,Popup} from 'antd-mobile';
+import { Modal, Flex,Button
+   , ListView,Picker,List,InputItem,Popup} from 'antd-mobile';
 import { Icon,Table} from 'antd';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-const zhNow = moment().locale('zh-cn').utcOffset(8);
 const isIPhone = new RegExp('\\biPhone\\b|\\biPod\\b', 'i').test(window.navigator.userAgent);
 let maskProps;
 if (isIPhone) {
@@ -29,29 +18,15 @@ const alert = Modal.alert;
 class ERecordisMobileComp extends React.Component {
   constructor(props) {
       super(props);
-      let permissionData = UserStore.getPermissionData();
-      let hasOperaPermission = permissionData['address_book'].indexOf('action') != -1;
-      this.showDeleteConfirmDialog = this.showDeleteConfirmDialog.bind(this);
       this.onOrganSelectChange = this.onOrganSelectChange.bind(this);
       const dataSource = new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
       this.state = {
-        url:'http://ip:port/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
-        moduleUrl:'/openagent?agent=hcit.project.moa.transform.agent.MobileViewWork', //模块url,当前是通知通告模块
-        activeTabkey:'按日期',
-        listData:[],
         dataSource: dataSource.cloneWithRows([]),
         refreshing: true,
-        yValue:['请选择'],
-        date: zhNow,
-        validValue:zhNow,
-        publicValue:zhNow,
-        dataDepartmentSource:[],
         selectOrganId:'',//选中的组织结构的ID数组
         columns:[],
-        permissionData:permissionData,
-        hasOperaPermission:hasOperaPermission, //是否有操作权限。
         sel: '',
       };
   }
@@ -104,7 +79,9 @@ class ERecordisMobileComp extends React.Component {
      {data.criminal!=='' ? (
         <List.Item key='10'><span>罪名</span><span>{data.criminal}</span></List.Item>
      ):null}
-     <List.Item key='12'><span>状态</span><span>{data.status}</span></List.Item>
+     {contactInfo.status!=='' ? (
+        <List.Item key='12'><span>状态</span><span>{contactInfo.status}</span></List.Item>
+     ):null}
      <List.Item key='13'><span>矫正类型</span><span>{data.type}</span></List.Item>
      <List.Item key='14'><span>解矫文书</span><img src={'http://211.138.238.83:9000/'+data.relieveCorrectionUrl}/></List.Item>
      <List.Item key='15'><span>档案号</span><span>{data.fileNumber}</span></List.Item>
@@ -119,24 +96,7 @@ class ERecordisMobileComp extends React.Component {
       dataIndex: 'Contacts',
       render:(text,record,index) => (
 
-          <SwipeAction
-            autoClose
-            disabled={this.state.hasOperaPermission ? false : true}
-            right={[
-              {
-                text: '取消',
-                onPress: () => console.log('cancel'),
-                style: { backgroundColor: '#ddd', color: 'white' },
-              },
-              {
-                text: '删除',
-                onPress: ()=>{this.showDeleteConfirmDialog(record)},
-                style: { backgroundColor: '#F4333C', color: 'white' },
-              },
-            ]}
-            onOpen={() => console.log('global open')}
-            onClose={() => console.log('global close')}
-            >
+
             <div key={record.identity+123456} className={'custom_listView_item'}>
               <div className={'list_item_container'}>
                   <div className={'list_item_middle'}>
@@ -149,39 +109,18 @@ class ERecordisMobileComp extends React.Component {
                     <img width="54" height="54" src={record.uploadUrl}/>
                   </div>
                   <div className={'list_item_right'}>
-                        {this.state.hasOperaPermission ? (
-                          <a href="javascript:;" style={{position:'absolute',top:'0',right:'0'}}>解矫</a>
-                        ):null}
+
+                        <a href="javascript:;" style={{position:'absolute',top:'0',right:'0'}}>解矫</a>
                         <a href="javascript:;" style={{position:'absolute',bottom:'-1.1rem',right:'0'}} onClick={()=>this.onClickOnRow(record)}>查看</a>
 
                   </div>
               </div>
             </div>
-          </SwipeAction>
 
           )
     }];
     this.setState({columns:columns});
 
-  }
-
-  showDeleteConfirmDialog = (record)=>{
-    let selectedId = record.id ? record.id : '';
-    alert('删除', '确定删除么??', [
-      { text: '取消', onPress: () => console.log('cancel') },
-      { text: '确定', onPress: () => this.confirmDelete(selectedId) },
-    ]);
-  }
-  confirmDelete = (selectedId)=>{ //确认删除
-    //TODO.
-  }
-  handleTabClick = (key)=>{
-    this.setState({
-      activeTabkey:key
-    });
-  }
-  onClickOneRow = (rowData)=>{
-    console.log("incomingList click rowData:",rowData);
   }
   onOrganSelectChange(val){
     console.log("onOrganSelectChange--:",val);
@@ -202,29 +141,14 @@ class ERecordisMobileComp extends React.Component {
     // }
     const { columns } = this.state;
     const { getFieldProps, getFieldError } = this.props.form;
-    const year = [{label: '2014 ',value: '2014 '},{label: '2015 ',value: '2015 '},{label: '2016 ',value: '2016 '},
-    {label: '2017 ',value: '2017 '}];
-    const month = [{label: '1 ',value: '1 '},{label: '2 ',value: '2 '},{label: '3 ',value: '3 '},
-    {label: '4 ',value: '4 '},{label: '5 ',value: '5 '},{label: '6 ',value: '6 '},{label: '7 ',value: '7 '},
-    {label: '8 ',value: '8 '},{label: '9 ',value: '9 '},{label: '10 ',value: '10 '},{label: '11 ',value: '11 '},
-    {label: '12 ',value: '12 '}];
+
     let organData = [];
     for(let i in this.props.organListData){
       organData.push({label:this.props.organListData[i].organName+'('+this.props.organListData[i].count+')',
          value: this.props.organListData[i].organId});
     }
     // console.log(organData);
-    const separator = (sectionID, rowID) => (
-      <div
-        key={`${sectionID}-${rowID}`}
-        style={{
-          backgroundColor: '#F5F5F9',
-          height: 8,
-          borderTop: '1px solid #ECECED',
-          borderBottom: '1px solid #ECECED',
-        }}
-      />
-    );
+
 
     let sponsorDepartmentSource=(
       <div className={'oa_detail_cnt'}>

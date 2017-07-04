@@ -23,8 +23,11 @@ class DispatchList extends React.Component {
         activeTabkey:'待办',
         colsNameCn:["拟稿日期","拟稿单位", "拟稿人", "文件标题", "发文类型", "发文文号", "当前办理人", "办理状态"],
         colsNameEn:["draftDate", "draftUnit", "draftPerson", "fileTitle", "fileType", "fileNum", "curUsers", "status"],
+        currentpage:1, //当前页码。
+        totalPageCount:1, //总页数。
+        isLoading:false, //是否在加载列表数据
+        isMoreLoading:false, //是否正在加载更多。
         listData:[],
-        isLoading:false,
         detailInfo:null,
         dataSource: dataSource.cloneWithRows([]),
         refreshing: true,
@@ -34,7 +37,7 @@ class DispatchList extends React.Component {
   }
   componentWillMount(){
     //从服务端获取数据。
-    this.getServerListData(this.state.activeTabkey,1);
+    this.getServerListData(this.state.activeTabkey,this.state.currentpage);
   }
   getServerListData = (keyName,currentpage,callback)=>{ //从服务端获取列表数据
     this.setState({isLoading:true});
@@ -46,18 +49,30 @@ class DispatchList extends React.Component {
       successCall: (data)=>{
         console.log("get server signReport list data:",data);
         let {colsNameEn} = this.state;
-        this.setState({isLoading:false});
         let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
+        parseData = { ...this.state.listData, ...parseData };
         this.setState({
-          listData:data.values,
+          isLoading:false,
+          isMoreLoading:false,
+          currentpage:this.state.currentpage+1,
+          totalPageCount:data.totalcount,
+          listData:parseData,
           dataSource: this.state.dataSource.cloneWithRows(parseData),
         });
         callback && callback();
       },
       errorCall: (data)=>{
-        this.setState({isLoading:false});
+        this.setState({isLoading:false,isMoreLoading:false});
       }
     });
+  }
+  onEndReached = (evt)=>{
+    let {currentpage,totalPageCount} = this.state;
+    if (this.state.isMoreLoading && (currentpage==totalPageCount)) {
+      return;
+    }
+    this.setState({ isMoreLoading: true });
+    this.getServerListData(this.state.activeTabkey,currentpage++);
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -71,7 +86,9 @@ class DispatchList extends React.Component {
   }
   handleTabClick = (key)=>{
     this.setState({
-      activeTabkey:key
+      activeTabkey:key,
+      listData:[],
+      currentpage:1
     });
     this.getServerListData(key,1);
   }
@@ -161,13 +178,18 @@ class DispatchList extends React.Component {
             dataSource={dataSource}
             renderRow={listRow}
             renderSeparator={separator}
+            renderFooter={() => (<div style={{ padding: 20, textAlign: 'center' }}>
+                {this.state.isMoreLoading ? '加载中...' : '没有更多了！'}
+              </div>)}
             scrollRenderAheadDistance={200}
             scrollEventThrottle={20}
             style={{
               height: document.documentElement.clientHeight,
             }}
             useBodyScroll={true}
-            scrollerOptions={{ scrollbars: true }}
+            scrollerOptions={{ scrollbars: false }}
+            onEndReached={this.onEndReached}
+            onEndReachedThreshold={10}
           />
         ):null}
       </TabPane>);

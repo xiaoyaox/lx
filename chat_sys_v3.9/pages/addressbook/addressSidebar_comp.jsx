@@ -22,8 +22,9 @@ export default class AddressSidebarMenuComp extends React.Component {
         organizationsData:React.PropTypes.array,
         organizationsFlatData:React.PropTypes.array,
         organizationsFlatDataMap:React.PropTypes.object,
-          getAddressBookCnt: React.PropTypes.func.isRequired,
-          setBreadcrumbData: React.PropTypes.func.isRequired
+        onClickMenuItem: React.PropTypes.func,
+        getAddressBookCnt: React.PropTypes.func.isRequired,
+        setBreadcrumbData: React.PropTypes.func.isRequired
       };
   }
   constructor(props) {
@@ -53,6 +54,7 @@ export default class AddressSidebarMenuComp extends React.Component {
     e.key && this.updateAddressBookList(e.key);
     let tempArr = e.keyPath;
     this.updateAddressBookBreadcrumb(tempArr.reverse());
+    this.props.onClickMenuItem();
   }
   onMenuOpenChange = (openKeys) => {
     const state = this.state;

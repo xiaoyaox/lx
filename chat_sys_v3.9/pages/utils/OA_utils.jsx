@@ -1,14 +1,13 @@
 import $ from 'jquery';
 import AppDispatcher from 'dispatcher/app_dispatcher.jsx';
 
-
-export function loginOASystem(loginUser, successCall){ //登录OA系统
+export function loginOASystem(loginOAUser, successCall){ //登录OA系统
   const loginUrl = 'http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.ValidatePerson';
   var param = encodeURIComponent(JSON.stringify({
     "ver" : "2",
     "params" : {
-      "username" : loginUser.username || 'whq',
-      "password" : loginUser.password || '123'
+      "username" : loginOAUser.oaUserName || 'whq',
+      "password" : loginOAUser.oaPassword || '123'
     }
   }));
   $.ajax({
@@ -263,6 +262,19 @@ export function getFormVerifyNotion(params) {
     }
   }));
   finalRequestServer(options,param);
+}
+
+export function parseHistoryNotionList(list){
+  let notionMap = {};
+  for(let i=0;i<list.length;i++){
+    let obj = list[i];
+    if(notionMap[obj['type']]){
+      notionMap[obj['type']].push(obj);
+    }else{
+      notionMap[obj['type']] = [obj];
+    }
+  }
+  return notionMap;
 }
 //保存阅文意见
 export function saveVerifyNotion(params) {

@@ -51,8 +51,8 @@ class AddressListComp extends React.Component {
                 <div className="member_name">
                   <span>({record.userName}) &nbsp;</span>
                   {this.state.hasOperaPermission ? (<div className="addressbook_oper">
-                    <a href="javascript:;" onClick={()=>{this.showDeleteConfirmDialog(record)}} style={{color:'red'}}><Icon type="delete" />删除</a>
-                    <a href="javascript:;" onClick={()=>{this.showAddEditDialog(text,record,index)}} style={{marginLeft:'15px'}}><Icon type="edit" />编辑</a>
+                    <a href="javascript:;" onClick={()=>{this.showAddEditDialog(text,record,index)}}><Icon type="edit" />编辑</a>
+                    <a href="javascript:;" onClick={()=>{this.showDeleteConfirmDialog(record)}} style={{color:'red',marginLeft:'15px'}}><Icon type="delete" />删除</a>
                   </div>):null}
                 </div>
                 <div className="member_email"><span>电子邮件：</span>{record.email}</div>

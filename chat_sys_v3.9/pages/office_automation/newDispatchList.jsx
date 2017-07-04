@@ -15,7 +15,7 @@ import 'moment/locale/zh-cn';
 const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 const alert = Modal.alert;
-//发文管理
+//最新发文
 class NewDispatchList extends React.Component {
   constructor(props) {
       super(props);
@@ -24,18 +24,21 @@ class NewDispatchList extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
       this.state = {
-        url:'http://ip:port/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
-        moduleUrl:'/openagent?agent=hcit.project.moa.transform.agent.MobileViewWork', //模块url,当前是通知通告模块
         tabsArr:["按日期", "按年度", "按主办部门", "组合查询"],
         activeTabkey:'按日期',
+        currentpage:1, //当前页码。
+        totalPageCount:1, //总页数。
+        isLoading:false, //是否在加载列表数据
+        isMoreLoading:false, //是否正在加载更多。
         listData:[],
         dataSource: dataSource.cloneWithRows([]),
-        refreshing: true,
         yValue:['请选择'],
         date: zhNow,
         validValue:zhNow,
         publicValue:zhNow,
         dataDepartmentSource:[],
+        showDetail:false,
+        detailInfo:null,
       };
   }
   componentWillMount(){
@@ -56,90 +59,40 @@ class NewDispatchList extends React.Component {
         this.setState({
           dataDepartmentSource:dataDepartment,
         });
-        //console.log("获取OA的组织机构数据：",this.state.dataDepartmentSource);
-
-        }
-
+      }
     });
-
-    const data = [{
-      key: '1',
-      title:'党委会议纪要',
-      verifState: '拟稿单位:办公室',
-      type: '办理',
-      sendTime:'2017/03/13'
-    }, {
-      key: '2',
-      title:'党委会议纪要',
-      verifState: '拟稿单位:办公室',
-      type: '办理2',
-      sendTime:'2017/06/08'
-    }, {
-      key: '3',
-      title:'党委会议纪要',
-      verifState: '拟稿单位:办公室',
-      type: '办理2',
-      sendTime:'2017/06/15'
-    }];
     //本地假数据
-    setTimeout(() => {
-      this.setState({
-        listData:data,
-        dataSource: this.state.dataSource.cloneWithRows(data),
-        refreshing: false
-      });
-    }, 1000);
+    this.setState({
+      listData:[],
+      dataSource: this.state.dataSource.cloneWithRows([])
+    });
     //从服务端获取数据。
-    // this.getServerListData();
+    // this.getServerListData(this.state.activeTabkey,this.state.currentpage);
   }
-  onRefresh = () => {
-    if(this.state.refreshing){ //如果正在刷新就不用重复刷了。
-      return;
-    }
-    console.log('onRefresh');
-    this.setState({ refreshing: true });
-    //本地假数据
-    setTimeout(() => {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(this.state.listData),
-        refreshing: false
-      });
-    }, 2000);
-    //从服务端获取数据。
-    // this.getServerListData();
-  };
-  getServerListData = ()=>{ //从服务端获取列表数据
-    var param = encodeURIComponent(JSON.stringify({
-			"ver" : "2",
-			"params" : {
-				"key" : 10,
-				"currentpage" : 1,
-				"viewname" : "hcit.module.qbgl.ui.VeCld",
-				"viewcolumntitles" : "文件标题,主办部门,拟稿日期,当前办理人,办理状态"
-			}
-		}));
-    $.ajax({
-				url : this.state.url,
-				data : {
-					"tokenunid" : "7503071114382B3716EAC10A53773B25",
-					"param" : param,
-          "url" : this.state.moduleUrl
-				},
-				async : true,
-				success : (result)=>{
-					var data  = decodeURIComponent(result);
-          data = data.replace(/%20/g, " ");
-					console.log("get server notice list data:",data);
-          if(data.code == "1"){
-            this.setState({
-              listData:data,
-              dataSource: this.state.dataSource.cloneWithRows(data.values),
-              refreshing: false
-            });
-          }
-				}
-			});
-
+  getServerListData = (keyName,currentpage)=>{
+    this.setState({isLoading:true});
+    OAUtils.getSuperviseListData({
+      tokenunid: this.props.tokenunid,
+      currentpage:currentpage,
+      keyName:keyName,
+      viewcolumntitles:this.state.colsNameCn.join(','),
+      successCall: (data)=>{
+        console.log("get 最新发文的list data:",data);
+        let {colsNameEn} = this.state;
+        let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
+        parseData = { ...this.state.listData, ...parseData };
+        this.setState({
+          isLoading:false,isMoreLoading:false,
+          currentpage:this.state.currentpage+1,
+          totalPageCount:data.totalcount,
+          listData:parseData,
+          dataSource: this.state.dataSource.cloneWithRows(parseData),
+        });
+      },
+      errorCall: (data)=>{
+        this.setState({isLoading:false,isMoreLoading:false});
+      }
+    });
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -152,39 +105,45 @@ class NewDispatchList extends React.Component {
     //TODO.
   }
   onvalidValueChange = (validValue) => {
-    // console.log('onChange', date);
     this.setState({
       validValue,
     });
   }
   onpublicValueChange = (publicValue) => {
-    // console.log('onChange', date);
     this.setState({
       publicValue,
     });
   }
   handleTabClick = (key)=>{
     this.setState({
-      activeTabkey:key
+      activeTabkey:key,
+      listData:[],
+      currentpage:1
     });
+    // this.getServerListData(key,1);
+  }
+  onEndReached = (evt)=>{
+    let {currentpage,totalPageCount} = this.state;
+    if (this.state.isMoreLoading && (currentpage==totalPageCount)) {
+      return;
+    }
+    this.setState({ isMoreLoading: true });
+    this.getServerListData(this.state.activeTabkey,currentpage++);
   }
   onClickOneRow = (rowData)=>{
     console.log("incomingList click rowData:",rowData);
+    this.setState({detailInfo:rowData, showDetail:true});
   }
-  render() {
 
+  render() {
     const { getFieldProps, getFieldError } = this.props.form;
     const year = [{label: '2014 ',value: '2014 '},{label: '2015 ',value: '2015 '},{label: '2016 ',value: '2016 '},
-    {label: '2017 ',value: '2017 '}];
+    {label: '2017 ',value: '2017 '},{label: '2018 ',value: '2018 '},{label: '2019 ',value: '2019 '}];
     const month = [{label: '1 ',value: '1 '},{label: '2 ',value: '2 '},{label: '3 ',value: '3 '},
     {label: '4 ',value: '4 '},{label: '5 ',value: '5 '},{label: '6 ',value: '6 '},{label: '7 ',value: '7 '},
     {label: '8 ',value: '8 '},{label: '9 ',value: '9 '},{label: '10 ',value: '10 '},{label: '11 ',value: '11 '},
     {label: '12 ',value: '12 '}];
-    // const sponsorDepartment = [{label: '局领导 ',value: '局领导 '},{label: '办公室 ',value: '办公室 '},{label: '戒毒工作管理处 ',value: '戒毒工作管理处 '},
-    // {label: '监狱工作管理处 ',value: '监狱工作管理处 '}];
-    // let sponsorDepartment1 = this.state.dataDepartmentSource.map((departmentName,index)=>{
-    //   [{label: {departmentName},value: {departmentName}}]});
-    //console.log(sponsorDepartment[0].label);
+
     let sponsorDepartment = [];
     for(var i=0;i<=this.state.dataDepartmentSource.length-1;i++){
       sponsorDepartment.push({label:this.state.dataDepartmentSource[i],
@@ -192,7 +151,6 @@ class NewDispatchList extends React.Component {
       // sponsorDepartment1[i].label=this.state.dataDepartmentSource[i];
       // sponsorDepartment1[i].value=this.state.dataDepartmentSource[i];
     }
-    // console.log(this.state.dataDepartmentSource);
     // console.log(sponsorDepartment1);
     const separator = (sectionID, rowID) => (
       <div
@@ -250,7 +208,6 @@ class NewDispatchList extends React.Component {
       </SwipeAction>
       );
     };
-    let dateSource;
 
     let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
       let yearSource=(
@@ -358,10 +315,16 @@ class NewDispatchList extends React.Component {
       (index=="3")?combinationSearch:null;
       return (<TabPane tab={tabName} key={tabName} >
         <div>{pagesContent}</div>
+
+        {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
+        {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
         <ListView
           dataSource={this.state.dataSource}
           renderRow={listRow}
           renderSeparator={separator}
+          renderFooter={() => (<div style={{ padding: 20, textAlign: 'center' }}>
+              {this.state.isMoreLoading ? '加载中...' : '没有更多了！'}
+            </div>)}
           initialListSize={4}
           pageSize={4}
           scrollRenderAheadDistance={200}
@@ -369,12 +332,10 @@ class NewDispatchList extends React.Component {
           style={{
             height: document.documentElement.clientHeight,
           }}
-          scrollerOptions={{ scrollbars: true }}
-          refreshControl={<RefreshControl
-            loading={(<Icon type="loading" />)}
-            refreshing={this.state.refreshing}
-            onRefresh={this.onRefresh}
-          />}
+          useBodyScroll={true}
+          scrollerOptions={{ scrollbars: false }}
+          onEndReached={this.onEndReached}
+          onEndReachedThreshold={10}
         />
       </TabPane>);
     });

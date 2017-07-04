@@ -6,6 +6,7 @@ import React from 'react';
 import Client from 'client/web_client.jsx';
 import PreferenceStore from 'stores/preference_store.jsx';
 import * as Utils from 'utils/utils.jsx';
+import {browserHistory} from 'react-router/es6';
 
 import SidebarHeaderDropdown from './sidebar_header_dropdown.jsx';
 import {Tooltip, OverlayTrigger} from 'react-bootstrap';
@@ -47,6 +48,9 @@ export default class SidebarHeader extends React.Component {
         e.preventDefault();
 
         this.refs.dropdown.toggleDropdown();
+    }
+    onClickBackToModules() {
+      browserHistory.push('/modules');
     }
 
     render() {

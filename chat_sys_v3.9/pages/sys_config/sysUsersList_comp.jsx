@@ -16,9 +16,7 @@ notification.config({
   duration: 3
 });
 
-
 const adminOrganizationId = "c45385564ee24938920d31ec7f176b43";
-
 class SysUsersListComp extends React.Component {
   constructor(props) {
       super(props);

@@ -136,7 +136,9 @@ class AddEditContactDialog extends React.Component {
   componentWillReceiveProps(nextProps){
     // console.log("componentWillReceiveProps--:",nextProps);
 
-    if(nextProps.visible && nextProps.contactInfo.id != this.props.contactInfo.id){
+    if(nextProps.visible
+       && nextProps.contactInfo.organization
+       && nextProps.contactInfo.organization.length != this.props.contactInfo.organization.length){
       let organization = nextProps.contactInfo.organization || '';
       let treeSelectValue = this.getOrgaTreeSelectedValues(organization.split(','));
       this.setState({treeSelectValue:treeSelectValue});

@@ -7,25 +7,14 @@ import {  notification } from 'antd';
 import {Toast} from 'antd-mobile';
 import echarts from 'echarts';
 import ERecordisMobileComp from './eRecord_mobile_comp.jsx';
+import ERecordisPcComp from './eRecord_pc_comp.jsx';
 const urlPrefix = 'http://211.138.238.83:9000/CS_JrlService/';
 
 notification.config({
   top: 68,
   duration: 3
 });
-const analysisKey2name = {
-  "zcrs":"在册人数",
-  "jjrs":"解矫人数",
-  "dyrj":"本月入矫",
-  "dyjj":"本月解矫",
-  "gz":"管制",
-  "hx":"缓刑",
-  "js":"假释",
-  "jwzx":"暂予监外执行",
-  "bq":"剥夺政治权利",
-  "sjdw":"手机定位",
-  "bddw":"北斗定位"
-};
+
 
 //矫正系统的统计分析。
 class ERecordComp extends React.Component {
@@ -42,16 +31,6 @@ class ERecordComp extends React.Component {
   componentWillReceiveProps(nextProps){
 
   }
-  updateChartData = (valueObj)=>{
-    let tongjiData = {};
-    $.each(valueObj,(key,value)=>{
-      tongjiData[analysisKey2name[key]] = value || "0";
-    });
-    if(document.getElementById('tongjiChartsMainContaner')){
-      let myChart = echarts.init(document.getElementById('tongjiChartsMainContaner'));
-      myChart.setOption( this.getChartOptions(Object.keys(tongjiData),Object.values(tongjiData)));
-    }
-  }
 
   render(){
   let echartView=this.state.isMobile ?
@@ -61,12 +40,14 @@ class ERecordComp extends React.Component {
     organListData={this.props.organListData}
     handleSearchDocument={this.props.handleSearchDocument}
     />) :
-  (<ERecordisMobileComp
-    redressOrganId={this.props.redressOrganId}
-    eRecordData={this.props.eRecordData}
-    organListData={this.props.organListData}
-    handleSearchDocument={this.props.handleSearchDocument}
-    />);
+  (<div className="ERecordPcStyle">
+         <ERecordisPcComp
+          redressOrganId={this.props.redressOrganId}
+          eRecordData={this.props.eRecordData}
+          organListData={this.props.organListData}
+          handleSearchDocument={this.props.handleSearchDocument}
+          />
+   </div>);
     return (
       <div className="notificationdetai_container">
         {echartView}

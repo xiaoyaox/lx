@@ -10,6 +10,8 @@ import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, InputItem, NavBar,
   TextareaItem,Flex,List,Picker} from 'antd-mobile';
 
+import CommonNotionComp from '../common/common_notion_comp.jsx';
+
 import {Icon } from 'antd';
 //签报管理的编辑详情内容
 class DetailContentCompRaw extends React.Component {
@@ -18,7 +20,7 @@ class DetailContentCompRaw extends React.Component {
       this.state = {
         loginUserName:'',
         nowDate:moment(new Date()).format('YYYY-MM-DD'),
-        historyNotionList:[],
+        historyNotionType2List:{},
         attachmentList:[],  //附件列表
       };
   }
@@ -37,7 +39,7 @@ class DetailContentCompRaw extends React.Component {
       successCall: (data)=>{
         console.log("get 签报管理的历史阅文意见:",data.values.notions);
         this.setState({
-          historyNotionList:data.values.notions,
+          historyNotionType2List:OAUtils.parseHistoryNotionList(data.values.notions || []),
         });
       },
       errorCall:(res)=>{
@@ -140,41 +142,29 @@ class DetailContentCompRaw extends React.Component {
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>领导批示：</div>
-              <TextareaItem
-              title=''
-              value={detailInfo.leaderAdvice}
-              editable={false}
-              labelNumber={0}/>
+              <CommonNotionComp
+              notionList={this.state.historyNotionType2List['领导批示'] || []} />
             </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>主管财务领导：</div>
-              <TextareaItem
-              title=''
-              value={detailInfo.fanancialLeaderAdvice}
-              editable={false}
-              labelNumber={0}/>
+                <CommonNotionComp
+                notionList={this.state.historyNotionType2List['主管领导意见'] || []} />
             </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>分管领导意见：</div>
-              <TextareaItem
-              title=''
-              value={detailInfo.divideLeaderAdvice}
-              editable={false}
-              labelNumber={0}/>
+                <CommonNotionComp
+                notionList={this.state.historyNotionType2List['分管领导意见'] || []} />
             </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>处室负责人：</div>
-              <TextareaItem
-              title=''
-              value={detailInfo.roomLeaderAdvice}
-              editable={false}
-              labelNumber={0}/>
+                <CommonNotionComp
+                notionList={this.state.historyNotionType2List['部门意见'] || []} />
             </Flex.Item>
           </Flex>
           <Flex>

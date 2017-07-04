@@ -26,43 +26,10 @@ class PersonalTodoList extends React.Component {
   }
 
   componentDidMount(){
-    const data = [{
-      key: '1',
-      title:'发文管理党委会议记要功能点核算',
-      modules: '发文管理',
-      type: '办理',
-      urgency: '十万火急',
-      sender:'奥利奥',
-      sendTime:'2017/06/01'
-    }, {
-      key: '2',
-      title:'党委会议记党委会议记要要党委会议记要2',
-      modules: '发文管理2',
-      type: '办理2',
-      urgency: '十万火急2',
-      sender:'奥利奥2',
-      sendTime:'2017/05/01'
-    }, {
-      key: '4',
-      title:'党委会议党委会党委会议记要议记要记要2',
-      modules: '发文管理2',
-      type: '办理2',
-      urgency: '十万火急2',
-      sender:'奥利奥3',
-      sendTime:'2017/05/01'
-    }, {
-      key: '5',
-      title:'党委会议记要2',
-      modules: '发文管理2',
-      type: '办理2',
-      urgency: '十万火急2',
-      sender:'奥利奥4',
-      sendTime:'2017/05/01'
-    }];
     setTimeout(() => {
       this.setState({
-        listData:data,
-        dataSource: this.state.dataSource.cloneWithRows(data),
+        listData:[],
+        dataSource: this.state.dataSource.cloneWithRows([]),
         refreshing: false
       });
     }, 1000);
@@ -86,37 +53,7 @@ class PersonalTodoList extends React.Component {
     // this.getServerListData();
   }
   getServerListData = ()=>{  //获取服务器端的待办事项数据。
-    var param = encodeURIComponent(JSON.stringify({
-			"ver" : "2",
-			"params" : {
-				"key" : 10, //10:表示获取待办内容
-				"currentpage" : 1,
-				"viewname" : "hcit.module.qbgl.ui.VeCld",
-				"viewcolumntitles" : "文件标题,主办部门,拟稿日期,当前办理人,办理状态"
-			}
-		}));
-    $.ajax({
-				url : this.state.url,
-				data : {
-					"tokenunid" : "7503071114382B3716EAC10A53773B25",
-					"param" : param,
-          "url" : this.state.moduleUrl
-				},
-				async : true,
-				success : (result)=>{
-					var data  = decodeURIComponent(result);
-          data = data.replace(/%20/g, " ");
-					console.log("get server notice list data:",data);
-          if(data.code == "1"){
-            this.setState({
-              listData:data,
-              dataSource: this.state.dataSource.cloneWithRows(data.values),
-              refreshing: false
-            });
-          }
-				}
-			});
-
+    //TODO
   }
 
   render() {

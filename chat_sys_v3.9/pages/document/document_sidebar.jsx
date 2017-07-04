@@ -60,6 +60,7 @@ export default class DocumentSidebar extends React.Component {
       }
       // console.log('menu item Clicked, searchParam: ', searchParam);
       this.props.handleSearch(searchParam);
+      this.props.onClickMenuItem();
     }
   }
 

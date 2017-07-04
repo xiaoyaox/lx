@@ -157,7 +157,7 @@ class AddressBookPage extends React.Component {
             style={{position:'fixed',height:'60px',zIndex:'13',width:'100%'}}
             className="mobile_navbar_custom"
             iconName = {false}
-            leftContent={[ <Icon type="arrow-left" className="back_arrow_icon" key={192384756}/>,<span style={{fontSize:'1em'}} key={13212343653}>返回</span>]}
+            leftContent={[ <Icon type="arrow-left" className="back_arrow_icon" key={156}/>,<span style={{fontSize:'1em'}} key={13}>返回</span>]}
             onLeftClick={this.onNavBarLeftClick}
             rightContent={[ <Icon key="1" type="ellipsis" style={{fontSize:'0.4rem'}} onClick={this.onOpenChange}/>]} >
             <img width="35" height="35" src={signup_logo}/>司法E通
@@ -241,6 +241,7 @@ class AddressBookPage extends React.Component {
               organizationsData={this.state.organizationsData}
               organizationsFlatData={this.state.organizationsFlatData}
               organizationsFlatDataMap={this.state.organizationsFlatDataMap}
+              onClickMenuItem={()=>{this.setState( {open:!this.state.open} ); }}
               getAddressBookCnt={(key)=>{this.getAddressBookCnt(key)}}
               setBreadcrumbData={(arr)=>{this.setBreadcrumbData(arr)}} />
         </Sider>

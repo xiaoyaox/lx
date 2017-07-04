@@ -16,7 +16,7 @@ class DS_DetailContentComp extends React.Component {
       super(props);
       this.state = {
         flow: [{label: '发文',value: '发文'},{label: '司法局发文流程',value: '司法局发文流程'}],
-        historyNotionList:[],
+        historyNotionType2List:[],
         attachmentList:[],  //附件列表
       };
   }
@@ -35,7 +35,7 @@ class DS_DetailContentComp extends React.Component {
       successCall: (data)=>{
         console.log("get 发文管理的历史阅文意见:",data.values.notions);
         this.setState({
-          historyNotionList:data.values.notions,
+          historyNotionType2List:OAUtils.parseHistoryNotionList(data.values.notions || []),
         });
       },
       errorCall:(res)=>{
@@ -156,11 +156,8 @@ class DS_DetailContentComp extends React.Component {
             <Flex.Item>
               <div className={'detail_textarea_title'}>传批意见</div>
               <div className="textarea_container">
-                <TextareaItem
-                  title=""
-                  autoHeight
-                  labelNumber={0}
-                  />
+                <CommonNotionComp
+                  notionList={this.state.historyNotionType2List['传批意见'] || []} />
               </div>
             </Flex.Item>
           </Flex>
@@ -169,11 +166,8 @@ class DS_DetailContentComp extends React.Component {
               <div id="JZYJ">
                 <div className={'detail_textarea_title'}>局长审核意见</div>
                 <div className="textarea_container">
-                  <TextareaItem
-                    title=""
-                    autoHeight
-                    labelNumber={0}
-                  />
+                  <CommonNotionComp
+                    notionList={this.state.historyNotionType2List['局长审核意见'] || []} />
                 </div>
               </div>
             </Flex.Item>
@@ -183,7 +177,8 @@ class DS_DetailContentComp extends React.Component {
               <div id="FGYJ">
                 <div className={'detail_textarea_title'}>分管领导意见</div>
                 <div className="textarea_container">
-                  <TextareaItem title="" autoHeight labelNumber={0} />
+                  <CommonNotionComp
+                    notionList={this.state.historyNotionType2List['分管领导意见'] || []} />
                 </div>
               </div>
             </Flex.Item>
@@ -191,13 +186,8 @@ class DS_DetailContentComp extends React.Component {
           <Flex>
             <Flex.Item>
               <div className={'detail_textarea_title'}>处室负责人意见</div>
-                <div className="textarea_container">
-                  <TextareaItem
-                    title=""
-                    autoHeight
-                    labelNumber={0}
-                  />
-                </div>
+              <CommonNotionComp
+                notionList={this.state.historyNotionType2List['部门意见'] || []} />
             </Flex.Item>
           </Flex>
           <Flex>
@@ -205,11 +195,8 @@ class DS_DetailContentComp extends React.Component {
               <div id="HG">
                 <div className={'detail_textarea_title'}>核稿</div>
                 <div className="textarea_container">
-                  <TextareaItem
-                    title=""
-                    autoHeight
-                    labelNumber={0}
-                  />
+                  <CommonNotionComp
+                    notionList={this.state.historyNotionType2List['部门意见'] || []} />
                 </div>
               </div>
             </Flex.Item>

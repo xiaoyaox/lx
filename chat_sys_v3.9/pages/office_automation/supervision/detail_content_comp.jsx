@@ -10,6 +10,7 @@ import { WingBlank, WhiteSpace, Button, InputItem,
   TextareaItem,Flex,List,Picker} from 'antd-mobile';
 
 import {Icon,Upload } from 'antd';
+import CommonNotionComp from '../common/common_notion_comp.jsx';
 //督办管理的编辑详情内容
 class DetailContentCompRaw extends React.Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class DetailContentCompRaw extends React.Component {
       this.state = {
         loginUserName:'',
         nowDate:moment(new Date()).format('YYYY-MM-DD'),
-        historyNotionList:[],
+        historyNotionType2List:[],
         attachmentList:[],
       };
   }
@@ -36,7 +37,7 @@ class DetailContentCompRaw extends React.Component {
       successCall: (data)=>{
         console.log("get 督办管理的历史阅文意见:",data.values.notions);
         this.setState({
-          historyNotionList:data.values.notions,
+          historyNotionType2List:OAUtils.parseHistoryNotionList(data.values.notions || []),
         });
       },
       errorCall:(res)=>{
@@ -202,25 +203,15 @@ class DetailContentCompRaw extends React.Component {
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>拟办意见：</div>
-              <TextareaItem
-                {...getFieldProps('todoAdvice')}
-                title=""
-                rows={3}
-                editable={false}
-                labelNumber={0}
-              />
+                <CommonNotionComp
+                  notionList={this.state.historyNotionType2List['拟办意见'] || []} />
             </Flex.Item>
           </Flex>
           <Flex>
             <Flex.Item>
               <div style={{margin:'0.2rem 0 0 0.2rem',color:'black'}}>领导意见：</div>
-              <TextareaItem
-                {...getFieldProps('leaderAdvice')}
-                title=""
-                rows={3}
-                editable={false}
-                labelNumber={0}
-              />
+                <CommonNotionComp
+                  notionList={this.state.historyNotionType2List['领导意见'] || []} />
             </Flex.Item>
           </Flex>
           <Flex>

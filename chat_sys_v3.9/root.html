@@ -75,20 +75,27 @@
         .error-screen-visible {
             display: block;
         }
+        #root div[data-reactroot]{
+          height:100%;
+        }
     </style>
     <script>
-      window.serverUrl = "http://matt.siteview.com";  //http://matt.siteview.com, www.sameview.com
-      window.serverPort = "10080";  //10080, 8068
+      window.serverUrl = "http://10.192.0.60:10080";
+      window.serverPort = "10080";
+      // window.serverUrl = "http://matt.siteview.com";
+      // window.serverPort = "10080";
+      //http://matt.siteview.com, www.sameview.com
+      //10080, 8068
       // window.serverUrl = "http://192.168.9.39:10080";
       // window.serverPort = "10080";
     </script>
 </head>
-<body>
+<body style="font-size:14px">
     <div id='root' style="height:100%;">
         <div class='error-screen'>
-            <h2>Cannot connect to 三人即时通</h2>
+            <h2>不能连接到司法E通</h2>
             <hr/>
-            <p>We’re having trouble connecting to 三人即时通. If refreshing this page (Ctrl+R or Command+R) does not work, please verify that your computer is connected to the internet.</p>
+            <p>如果刷新不能还没好的话，请检查你的网络是不是正常。</p>
             <br/>
         </div>
         <div
@@ -109,7 +116,7 @@
         window.setup_root();
     </script>
     <noscript>
-        To use 三人即时通, please enable JavaScript.
+        为了你能正常使用司法E通, 请启用浏览器的javascript。
     </noscript>
 </body>
 </html>

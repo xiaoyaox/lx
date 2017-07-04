@@ -76,7 +76,8 @@ class AddEditSysConfigDialog extends React.Component {
         confirmDirty:false,
         menberInfo:{},
         isAdd:false, //判断是否是新增弹窗
-        visible: false
+        visible: false,
+        organizaionValidate:{}, //组织机构的验证提示对象。
       };
   }
   componentWillMount(){
@@ -142,6 +143,19 @@ class AddEditSysConfigDialog extends React.Component {
     submitInfo.organizations = this.getOrganizationsStr();
     let params = Object.assign({},initUserInfo,this.state.menberInfo,submitInfo);
     params = this.parseSendServerParams(params);
+    if(!params.organizations){ //验证组织结构是否已经填写。
+      this.setState({
+        organizaionValidate:{
+          label:"Fail",
+          validateStatus:"error",
+          help:"组织机构是必填项，不能为空！"
+        }
+      });
+      setTimeout(()=>{ this.setState({ organizaionValidate:{} }); }, 2500);
+      return;
+    }else{
+      this.setState({ organizaionValidate:{} });
+    }
 
     let actionName = this.props.menberInfo.id ? "update" : "create"; //获取接口名字
     let desc = this.props.menberInfo.id ? "修改" : "新增"; //
@@ -203,7 +217,9 @@ class AddEditSysConfigDialog extends React.Component {
   componentWillReceiveProps(nextProps){
     // console.log("componentWillReceiveProps--:",nextProps);
 
-    if(nextProps.visible && nextProps.menberInfo.organizations){
+    // && nextProps.menberInfo.organizations && this.props.menberInfo.organizations
+    // && (nextProps.menberInfo.organizations.length!=this.props.menberInfo.organizations.length
+    if(nextProps.visible && nextProps.visible != this.props.visible){
       let organizations = nextProps.menberInfo.organizations;
       let treeSelectValue = this.getOrgaTreeSelectedValues(organizations.split(','));
       this.setState({treeSelectValue:treeSelectValue});
@@ -395,7 +411,7 @@ class AddEditSysConfigDialog extends React.Component {
                   )}
                 </FormItem>
               </Col>):null}
-              
+
               <Col span={24}>
                 <FormItem {...formItemLayout} label="邮箱">
                   {getFieldDecorator('email', {
@@ -447,7 +463,10 @@ class AddEditSysConfigDialog extends React.Component {
                 </FormItem>
               </Col>
               <Col span={24}>
-                <FormItem {...formItemLayout} label="组织机构">
+                <FormItem {...formItemLayout} label="组织机构"
+                  colon hasFeedback
+                  className={'organization_form_item'}
+                  {...this.state.organizaionValidate} >
                   <TreeSelect {...treeSelectProps} />
                 </FormItem>
               </Col>

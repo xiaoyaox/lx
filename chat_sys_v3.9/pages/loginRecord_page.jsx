@@ -77,8 +77,10 @@ class LoginRecordPage extends React.Component {
       return (<div className='office_automation_drawer'>
         <Drawer
           style={{ minHeight: document.documentElement.clientHeight - 200 }}
-          touch={true} sidebarStyle={{height:'100%',background:'#fff',overflow:'hidden'}}
-          contentStyle={{ color: '#A6A6A6'}} sidebar={sidebarMobile}
+          touch={true}
+          sidebarStyle={{height:'100%',background:'#2071a7',overflow:'hidden'}}
+          contentStyle={{ color: '#A6A6A6'}}
+          sidebar={sidebarMobile}
           {...drawerProps} >
           <NavBar className="mobile_navbar_custom"
           iconName = {false} onLeftClick={this.onNavBarLeftClick}

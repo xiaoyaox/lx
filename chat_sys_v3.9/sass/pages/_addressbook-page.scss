@@ -93,12 +93,13 @@
       }
 
       .addressbook_oper{
-        position:relative;
+        position:absolute;
         display:inline-block;
         margin-left:10px;
+        right:10px;
       }
     }
-  
+
 }
 .contact-edit-mobile{
   // top:60px;

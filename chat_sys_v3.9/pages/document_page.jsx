@@ -70,8 +70,15 @@ class DocumentPage extends React.Component {
     let _this = this;
     var me = UserStore.getCurrentUser() || {};
     this.setState({loginUserName:me.username || ''});
-    this.getFileDepartment(me.organizations);
-    this.handleSearch();
+    this.getFileDepartment(me.organizations,(firstDepart)=>{
+      this.setState({
+        currentFileSubType:firstDepart
+      });
+      this.handleSearch({
+        fileInfoType:this.state.currentFileType,
+        fileInfoSubType:firstDepart
+      });
+    });
     // $('body').addClass('app__body');
 
   }
@@ -101,7 +108,7 @@ class DocumentPage extends React.Component {
             });
           }
         });
-        department.length>0 ? _param.department = department.join(',') : null;
+        department.length >0 ? _param.department = department.join(',') : null;
       }
     }
     MyWebClient.getSearchFileInfo(_param,
@@ -150,7 +157,7 @@ class DocumentPage extends React.Component {
     }
     return nodes;
   }
-  getFileDepartment(organizations) { //权限部门数据
+  getFileDepartment(organizations,callback) { //权限部门数据
     let _this = this;
     MyWebClient.getFileDepartment(organizations,
       (data, res) => {
@@ -158,8 +165,9 @@ class DocumentPage extends React.Component {
          //  console.log(res.text);
           const result = JSON.parse(res.text);
           const resource = this.convertSiderData(result);
-          // console.log("departmentData-权限部门数据-:",resource);
+          // console.log("departmentData-档案管理-权限部门数据-:",resource);
           this.setState({departmentData: resource});
+          callback && callback(resource[0]['resourceName']);
         }
       },
       (e, err, res) => {
@@ -262,7 +270,7 @@ class DocumentPage extends React.Component {
           className="address_book_drawer"
           style={{ minHeight: document.documentElement.clientHeight - 200 }}
           touch={true}
-          sidebarStyle={{height:'100%',background:'#fff'}}
+          sidebarStyle={{height:'100%',background:'#2071a7'}}
           contentStyle={{ color: '#A6A6A6'}}
           sidebar={sidebar}
           {...drawerProps} >
@@ -393,6 +401,7 @@ class DocumentPage extends React.Component {
           searchFormPC={this.refs.searchFormPC}
           setCurrentFileSubType={this.setCurrentFileSubType.bind(this)}
           setCurrentDepartment={this.setCurrentDepartment.bind(this)}
+          onClickMenuItem={()=>{this.setState( {open:!this.state.open} ); }}
           handleSearch={this.handleSearch} />
       </Sider>
     );

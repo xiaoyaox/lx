@@ -24,17 +24,20 @@ class SuperviseList extends React.Component {
         activeTabkey:'待办',
         colsNameCn:["收文日期", "标题", "来文单位", "督办类别", "当前办理人"],
         colsNameEn:["acceptDate", "title", "sendUnit", "superviseType", "curUsers"],
+        currentpage:1, //当前页码。
+        totalPageCount:1, //总页数。
+        isLoading:false, //是否在加载列表数据
+        isMoreLoading:false, //是否正在加载更多。
         listData:[],
         dataSource: dataSource.cloneWithRows([]),
         detailInfo:null,
-        isLoading:false, //是否在加载列表数据
         showAdd:false,
         showDetail:false,
       };
   }
   componentWillMount(){
     //从服务端获取数据。
-    this.getServerListData(this.state.activeTabkey,1);
+    this.getServerListData(this.state.activeTabkey,this.state.currentpage);
   }
   getServerListData = (keyName,currentpage)=>{
     this.setState({isLoading:true});
@@ -45,18 +48,29 @@ class SuperviseList extends React.Component {
       viewcolumntitles:this.state.colsNameCn.join(','),
       successCall: (data)=>{
         console.log("get 督办管理的list data:",data);
-        this.setState({isLoading:false});
         let {colsNameEn} = this.state;
         let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
+        parseData = { ...this.state.listData, ...parseData };
         this.setState({
-          listData:data.values,
+          isLoading:false,isMoreLoading:false,
+          currentpage:this.state.currentpage+1,
+          totalPageCount:data.totalcount,
+          listData:parseData,
           dataSource: this.state.dataSource.cloneWithRows(parseData),
         });
       },
       errorCall: (data)=>{
-        this.setState({isLoading:false});
+        this.setState({isLoading:false,isMoreLoading:false});
       }
     });
+  }
+  onEndReached = (evt)=>{
+    let {currentpage,totalPageCount} = this.state;
+    if (this.state.isMoreLoading && (currentpage==totalPageCount)) {
+      return;
+    }
+    this.setState({ isMoreLoading: true });
+    this.getServerListData(this.state.activeTabkey,currentpage++);
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -70,7 +84,9 @@ class SuperviseList extends React.Component {
   }
   handleTabClick = (key)=>{
     this.setState({
-      activeTabkey:key
+      activeTabkey:key,
+      listData:[],
+      currentpage:1
     });
     this.getServerListData(key,1);
   }
@@ -160,15 +176,20 @@ class SuperviseList extends React.Component {
           dataSource={dataSource}
           renderRow={listRow}
           renderSeparator={separator}
-          initialListSize={5}
-          pageSize={5}
+          renderFooter={() => (<div style={{ padding: 20, textAlign: 'center' }}>
+              {this.state.isMoreLoading ? '加载中...' : '没有更多了！'}
+            </div>)}
+          initialListSize={10}
+          pageSize={50}
           scrollRenderAheadDistance={200}
           scrollEventThrottle={20}
           style={{
             height: document.documentElement.clientHeight,
           }}
           useBodyScroll={true}
-          scrollerOptions={{ scrollbars: true }}
+          scrollerOptions={{ scrollbars: false }}
+          onEndReached={this.onEndReached}
+          onEndReachedThreshold={10}
         />):null}
       </TabPane>);
     });
@@ -193,8 +214,8 @@ class SuperviseList extends React.Component {
             tokenunid={this.props.tokenunid}
             activeTabkey={this.state.activeTabkey}
             detailInfo={this.state.detailInfo}
-            backToTableListCall={this.backToTableListCall
-          }/>:null}
+            backToTableListCall={this.backToTableListCall}
+          />:null}
       </div>
     )
   }
