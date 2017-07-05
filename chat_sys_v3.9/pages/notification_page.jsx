@@ -191,6 +191,8 @@ class NotificationPage extends React.Component {
             this.setState({
               eRecordData:values || [],
             });
+            notification.success({message: '矫正系统获取电子档案成功，'+res.respMsg});
+
           }
       });
     }

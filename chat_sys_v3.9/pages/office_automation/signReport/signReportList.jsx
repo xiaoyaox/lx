@@ -66,7 +66,7 @@ class SignReportList extends React.Component {
   }
   onEndReached = (evt)=>{
     let {currentpage,totalPageCount} = this.state;
-    if (this.state.isMoreLoading && (currentpage==totalPageCount)) {
+    if (!this.state.isMoreLoading && (currentpage==totalPageCount)) {
       return;
     }
     this.setState({ isMoreLoading: true });

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import React from 'react';
 // import * as Utils from 'utils/utils.jsx';
 import * as OAUtils from 'pages/utils/OA_utils.jsx';
-import { WingBlank, WhiteSpace, Button, NavBar, TabBar, Toast } from 'antd-mobile';
+import { WingBlank, WhiteSpace, Button, NavBar, Toast } from 'antd-mobile';
 import {Icon} from 'antd';
 
 import DS_DetailContentComp from './ds_detail_content_comp.jsx';

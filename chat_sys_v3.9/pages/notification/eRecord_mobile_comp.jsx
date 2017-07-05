@@ -2,6 +2,8 @@
 import $ from 'jquery';
 import React from 'react';
 import { createForm } from 'rc-form';
+import avator_man from 'images/avator_icon/avator_man.png';
+import avator_woman from 'images/avator_icon/avator_woman.png';
 import { Modal, Flex,Button
    , ListView,Picker,List,InputItem,Popup} from 'antd-mobile';
 import { Icon,Table} from 'antd';
@@ -64,7 +66,11 @@ class ERecordisMobileComp extends React.Component {
      >
 
      <List.Item key='0'><span>姓名</span><span>{data.name}</span></List.Item>
-     <List.Item key='1'><span>图像</span><img src={data.uploadUrl}/></List.Item>
+     {data.uploadUrl!=='' ? (
+        <List.Item key='1'><span>图像</span><img src={data.uploadUrl}/></List.Item>
+     ):data.sex=="男"?
+     (<List.Item key='1'><span>图像</span><img src={avator_man}/></List.Item>):
+     (<List.Item key='1'><span>图像</span><img src={avator_woman}/></List.Item>)}
      <List.Item key='2'><span>性别</span><span>{data.sex}</span></List.Item>
      <List.Item key='11'><span>出生日期</span><span>{data.csrq}</span></List.Item>
      <List.Item key='3'><span>机构名称</span><span>{data.organ}</span></List.Item>
@@ -79,8 +85,8 @@ class ERecordisMobileComp extends React.Component {
      {data.criminal!=='' ? (
         <List.Item key='10'><span>罪名</span><span>{data.criminal}</span></List.Item>
      ):null}
-     {contactInfo.status!=='' ? (
-        <List.Item key='12'><span>状态</span><span>{contactInfo.status}</span></List.Item>
+     {data.status!=='' ? (
+        <List.Item key='12'><span>状态</span><span>{data.status}</span></List.Item>
      ):null}
      <List.Item key='13'><span>矫正类型</span><span>{data.type}</span></List.Item>
      <List.Item key='14'><span>解矫文书</span><img src={'http://211.138.238.83:9000/'+data.relieveCorrectionUrl}/></List.Item>
@@ -88,7 +94,7 @@ class ERecordisMobileComp extends React.Component {
      </List>
    </div>, { animationType: 'slide-up', maskProps, maskClosable: false });
     //let info = data || {};
-    // this.setState({contactInfo:info, isShowEditDialog:true});
+    // this.setState({data:info, isShowEditDialog:true});
   }
   componentWillMount(){
     const columns = [{
@@ -106,11 +112,15 @@ class ERecordisMobileComp extends React.Component {
                     </div>
                   </div>
                   <div className={'list_item_left'}>
-                    <img width="54" height="54" src={record.uploadUrl}/>
+                        {record.uploadUrl!=='' ? (
+                           <img width="54" height="54" src={record.uploadUrl}/>
+                        ):record.sex=="男"?
+                        (<img width="54" height="54" src={avator_man}/>):
+                        (<img width="54" height="54" src={avator_woman}/>)}
                   </div>
                   <div className={'list_item_right'}>
 
-                        <a href="javascript:;" style={{position:'absolute',top:'0',right:'0'}}>解矫</a>
+
                         <a href="javascript:;" style={{position:'absolute',bottom:'-1.1rem',right:'0'}} onClick={()=>this.onClickOnRow(record)}>查看</a>
 
                   </div>
@@ -120,7 +130,7 @@ class ERecordisMobileComp extends React.Component {
           )
     }];
     this.setState({columns:columns});
-
+    //<a href="javascript:;" style={{position:'absolute',top:'0',right:'0'}}>解矫</a>
   }
   onOrganSelectChange(val){
     console.log("onOrganSelectChange--:",val);
@@ -129,6 +139,8 @@ class ERecordisMobileComp extends React.Component {
     });
   }
   componentWillReceiveProps(nextProps){
+    console.log(nextProps);
+
     if(nextProps.redressOrganId && nextProps.redressOrganId!=this.props.redressOrganId){
       this.setState({selectOrganId:nextProps.redressOrganId});
     }

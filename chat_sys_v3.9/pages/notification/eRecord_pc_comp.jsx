@@ -1,8 +1,9 @@
 //电子档案手机界面
 import $ from 'jquery';
 import React from 'react';
-
 import * as Utils from 'utils/utils.jsx';
+import avator_man from 'images/avator_icon/avator_man.png';
+import avator_woman from 'images/avator_icon/avator_woman.png';
 import { createForm } from 'rc-form';
 import { Modal,Flex
    , ListView,List,InputItem} from 'antd-mobile';
@@ -54,7 +55,7 @@ class ERecordisMobileComp extends React.Component {
     });
   }
   handleCancel = (e) => {
-    console.log(e);
+    //console.log(e);
     this.setState({
       visible: false,
     });
@@ -65,9 +66,9 @@ class ERecordisMobileComp extends React.Component {
      contactInfo:info,
      visible: true,
    });
-   console.log(data);
-   console.log(data.name);
-   console.log(this.state.visible);
+  //  console.log(data);
+  //  console.log(data.name);
+  //  console.log(this.state.visible);
    }
   componentWillMount(){
     const columns = [{
@@ -85,11 +86,14 @@ class ERecordisMobileComp extends React.Component {
                     </div>
                   </div>
                   <div className={'list_item_left'}>
-                    <img width="54" height="54" src={record.uploadUrl}/>
+                    {record.uploadUrl!=='' ? (
+                       <img width="54" height="54" src={record.uploadUrl}/>
+                    ):record.sex=="男"?
+                    (<img width="54" height="54" src={avator_man}/>):
+                    (<img width="54" height="54" src={avator_woman}/>)}
                   </div>
                   <div className={'list_item_right'}>
 
-                    <a href="javascript:;" style={{position:'absolute',top:'0',right:'0'}}>解矫</a>
 
                     <a href="javascript:;" style={{position:'absolute',bottom:'-1.1rem',right:'0'}} onClick={()=>this.onClickOnRow(record)}>查看</a>
 
@@ -100,6 +104,7 @@ class ERecordisMobileComp extends React.Component {
           )
     }];
     this.setState({columns:columns});
+    // <a href="javascript:;" style={{position:'absolute',top:'0',right:'0'}}>解矫</a>
 
   }
   onOrganSelectChange(val){
@@ -117,7 +122,7 @@ class ERecordisMobileComp extends React.Component {
     const { contactInfo,visible } = this.state;
 
     let selectOrganId = this.state.selectOrganId || this.props.redressOrganId;
-    console.log("selectOrganId--:",selectOrganId);
+    //console.log("selectOrganId--:",selectOrganId);
     // if(!selectOrganId){
     //   selectOrganId = this.props.organListData[0]['organId'];
     // }
@@ -135,7 +140,7 @@ class ERecordisMobileComp extends React.Component {
       optionData.push(this.props.organListData[i].organName+'('+this.props.organListData[i].count+')');
     }
     let optionDataDisplay=organData.map((tagName,index)=>{
-      return (<Option value={tagName.value} key={index}>{tagName.label}</Option>);
+      return (<Option value={tagName.value+''} key={index}>{tagName.label}</Option>);
     });
     let sponsorDepartmentSource=(
       <div className={'oa_detail_cnt'}>
@@ -143,35 +148,30 @@ class ERecordisMobileComp extends React.Component {
           <Flex>
             <Flex.Item>
               <div>
-                  <span style={{color: 'black',fontSize:'0.3rem'}}><Icon type="team"
-                  style={{color: '#278197',fontSize:'0.6rem'}}/>组织机构:</span>
-                  <Select defaultValue={optionData[0]} style={{ width: 400 }} onSelect={this.onOrganSelectChange}>
-                        {optionDataDisplay}
-                  </Select>
+                  <div style={{ float: 'left' }}>
+                        <span style={{color: 'black',fontSize:'0.3rem'}}><Icon type="team"
+                        style={{color: '#278197',fontSize:'0.6rem'}}/>组织机构:</span>
+                        <Select defaultValue={optionData[0]} style={{ width: 400 }} onSelect={this.onOrganSelectChange}>
+                              {optionDataDisplay}
+                        </Select>
+                  </div>
+
+                  <InputItem clear {...getFieldProps('name')} style={{ float: 'left',marginLeft:20 }}
+                  editable={true} labelNumber={2} placeholder="请输入姓名"><span style={{color: 'black',fontSize:'0.3rem',verticalAlign:'super'}}>
+                  <Icon type="user"
+                  style={{color: '#278197',fontSize:'0.6rem'}}/>姓名:</span></InputItem>
+                  <InputItem clear {...getFieldProps('telephone')} style={{float: 'left'}}
+                  editable={true} labelNumber={2} placeholder="请输入手机号">
+                  <span style={{color: 'black',fontSize:'0.3rem',verticalAlign:'super'}}>
+                  <Icon type="phone"
+                  style={{color: '#EF9F2E',fontSize:'0.6rem'}}/>手机号:</span></InputItem>
                   <button type="submit" style={{marginLeft: 30}}
                     className="btn btn-primary" onClick={this.onClickSearchSubmit}
                     ><Icon type="search" /> 查询</button>
               </div>
             </Flex.Item>
           </Flex>
-          <Flex>
-            <Flex.Item>
-              <div>
-                  <InputItem clear {...getFieldProps('name')}
-                  editable={true} labelNumber={2} placeholder="请输入姓名"><Icon type="user"
-                  style={{color: '#278197',fontSize:'0.6rem'}}/>姓名:</InputItem>
-              </div>
-            </Flex.Item>
-          </Flex>
-          <Flex>
-            <Flex.Item>
-              <div>
-                  <InputItem clear {...getFieldProps('telephone')}
-                  editable={true} labelNumber={2} placeholder="请输入手机号"><Icon type="phone"
-                  style={{color: '#EF9F2E',fontSize:'0.6rem'}}/>手机号:</InputItem>
-              </div>
-            </Flex.Item>
-          </Flex>
+
         </div>
 
       </div>
@@ -187,13 +187,17 @@ class ERecordisMobileComp extends React.Component {
                visible={visible}
                onOk={this.handleOk}
                onCancel={this.handleCancel}
-               width="700px"
-               height="auto"
-               maskClosable={false}
+               width="400px"
+               height="813px"
+               maskClosable={true}
             >
                  <List>
                          <List.Item key='0'><span>姓名</span><span>{contactInfo.name}</span></List.Item>
-                         <List.Item key='1'><span>图像</span><img src={contactInfo.uploadUrl}/></List.Item>
+                         {contactInfo.uploadUrl!=='' ? (
+                            <List.Item key='1'><span>图像</span><img src={contactInfo.uploadUrl}/></List.Item>
+                         ):contactInfo.sex=="男"?
+                         (<List.Item key='1'><span>图像</span><img src={avator_man}/></List.Item>):
+                         (<List.Item key='1'><span>图像</span><img src={avator_woman}/></List.Item>)}
                          <List.Item key='2'><span>性别</span><span>{contactInfo.sex}</span></List.Item>
                          <List.Item key='11'><span>出生日期</span><span>{contactInfo.csrq}</span></List.Item>
                          <List.Item key='3'><span>机构名称</span><span>{contactInfo.organ}</span></List.Item>

@@ -17,8 +17,6 @@ class PersonalTodoList extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
       this.state = {
-        url:'http://ip:port/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
-        moduleUrl:'/openagent?agent=hcit.project.moa.transform.agent.MobileViewWork', //待办事项模块的url.
         listData:[], //原生list数据
         dataSource: dataSource.cloneWithRows([]),  //listView的源数据。
         refreshing: false,

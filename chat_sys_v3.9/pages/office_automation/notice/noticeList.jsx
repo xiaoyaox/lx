@@ -22,14 +22,16 @@ class NoticeList extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
       this.state = {
-        tabsArr:["所有", "待审核", "已通过", "未通过"],
-        activeTabkey:'所有',
-        colsNameCn:["拟稿日期", "文件标题", "主办部门", "当前办理人"],
-        colsNameEn:["draftDate", "fileTitle", "department", "curUsers"],
+        rootlbunid: '72060E133431242D987C0A80A4124268',
+        tabsArr:["待审核", "已通过", "未通过"],
+        activeTabkey:'待审核',
+        colsNameCn:[ "标题", "发布日期", "所属类别", "所属单位"],
+        colsNameEn:["fileTitle", "publishTime", "type" ,"unit"],
         currentpage:1, //当前页码。
         totalPageCount:1, //总页数。
         isLoading:false, //是否在加载列表数据。
         isMoreLoading:false, //是否正在加载更多。
+        hasMore:false, //是否还有更多数据。
         listData:[],
         dataSource: dataSource.cloneWithRows([]),
         showDetail:false,
@@ -38,26 +40,32 @@ class NoticeList extends React.Component {
   }
   componentWillMount(){
     //从服务端获取数据。
-    this.getServerListData(this.state.activeTabkey,this.state.currentpage);
+    this.getServerListData(this.state.rootlbunid,this.state.activeTabkey,this.state.currentpage);
   }
-  getServerListData = (keyName,currentpage)=>{ //从服务端获取列表数据
+  getServerListData = (rootlbunid,keyName,currentpage)=>{ //从服务端获取列表数据
     this.setState({isLoading:true});
     OAUtils.getNoticeListData({
       tokenunid: this.props.tokenunid,
       currentpage:currentpage,
-      keyName:keyName,
+      rootlbunid:rootlbunid,
+      shbz:({"待审核":"0", "已通过":"1", "未通过":"-1"})[keyName],
       viewcolumntitles:this.state.colsNameCn.join(','),
       successCall: (data)=>{
-        console.log("get 通知公告的list data:",data);
+        console.log("get 通知公告的list data:",currentpage,data);
         let {colsNameEn} = this.state;
         let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
-        parseData = { ...this.state.listData, ...parseData };
+        for(let i in parseData){
+          parseData[i]["verifyState"] = keyName;
+        }
+        let listData = this.state.listData.concat(parseData);
         this.setState({
-          isLoading:false,isMoreLoading:false,
-          currentpage:this.state.currentpage+1,
+          isLoading:false,
+          isMoreLoading:false,
+          currentpage:currentpage+1,
           totalPageCount:data.totalcount,
-          listData:parseData,
-          dataSource: this.state.dataSource.cloneWithRows(parseData),
+          listData:listData,
+          hasMore:(currentpage+1)<=data.totalcount,
+          dataSource: this.state.dataSource.cloneWithRows(listData),
         });
       },
       errorCall: (data)=>{
@@ -81,7 +89,7 @@ class NoticeList extends React.Component {
       listData:[],
       currentpage:1
     });
-    this.getServerListData(key,1);
+    this.getServerListData(this.state.rootlbunid,key,1);
   }
   onClickOneRow = (rowData)=>{
     console.log("通知公告 click rowData:",rowData);
@@ -93,13 +101,13 @@ class NoticeList extends React.Component {
   backToTableListCall = ()=>{
     this.setState({showDetail:false,showAddEdit:false});
   }
-  onEndReached = (evt)=>{
-    let {currentpage,totalPageCount} = this.state;
-    if (this.state.isMoreLoading && (currentpage==totalPageCount)) {
+  onClickLoadMore = (evt)=>{
+    let {currentpage,totalPageCount,hasMore} = this.state;
+    if (!this.state.isMoreLoading && !hasMore) {
       return;
     }
     this.setState({ isMoreLoading: true });
-    // this.getServerListData(this.state.activeTabkey,currentpage++);
+    this.getServerListData(this.state.rootlbunid, this.state.activeTabkey,currentpage);
   }
   render() {
     const separator = (sectionID, rowID) => (
@@ -172,8 +180,8 @@ class NoticeList extends React.Component {
         <SwipeAction style={{ backgroundColor: 'gray' }}
           autoClose
           disabled={false}
-          right={(rowData.verifState.indexOf('已通过')!=-1)?disExamine:
-          (rowData.verifState.indexOf('未通过')!=-1)?disPass:(rowData.verifState.indexOf('待审核')!=-1)?
+          right={(rowData.verifyState.indexOf('已通过')!=-1)?disExamine:
+          (rowData.verifyState.indexOf('未通过')!=-1)?disPass:(rowData.verifyState.indexOf('待审核')!=-1)?
           waitExamine:otherOption}
           onOpen={() => console.log('global open')}
           onClose={() => console.log('global close')}
@@ -186,7 +194,7 @@ class NoticeList extends React.Component {
           >
             <div className={'list_item_container'}>
               <div className={'list_item_middle'}>
-                <div style={{color:'black',fontSize:'0.33rem',fontWeight:'bold'}}>{rowData.title}</div>
+                <div style={{color:'black',fontSize:'0.33rem',fontWeight:'bold'}}>{rowData.fileTitle}</div>
               </div>
               <div className={'list_item_left'}>
                 <span className={'list_item_left_icon'} >
@@ -194,14 +202,25 @@ class NoticeList extends React.Component {
                 </span>
               </div>
               <div className={'list_item_right'}>
-                <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.sendTime}</div>
-                <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.verifState}</div>
+                <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.publishTime}</div>
+                <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.verifyState}</div>
               </div>
             </div>
         </div>
       </SwipeAction>
       );
     };
+    const listViewRenderFooter = ()=>{
+      if(this.state.isMoreLoading){
+        return (<div style={{ padding: 10, textAlign: 'center' }}>加载中...</div>);
+      }else if(this.state.hasMore){
+        return (<div style={{ padding: 10, textAlign: 'center' }} >
+              <Button type="default" style={{margin:'0 auto',width:'90%'}}
+                onClick={()=>this.onClickLoadMore()}>加载更多</Button>
+            </div>);
+      }
+      return (<div style={{ padding: 10, textAlign: 'center' }}>没有更多了！</div>);
+    }
     let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
       return (<TabPane tab={tabName} key={tabName} >
         <Button type="primary" style={{margin:'0 auto',marginTop:'0.1rem',width:'98%'}}
@@ -210,27 +229,22 @@ class NoticeList extends React.Component {
         {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
         {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
 
-        <ListView
+        {(!this.state.showAddEdit && !this.state.showDetail)?(<ListView
           dataSource={this.state.dataSource}
           renderRow={listRow}
           renderSeparator={separator}
-          renderFooter={() => (<div style={{ padding: 20, textAlign: 'center' }}>
-              {this.state.isMoreLoading ? '加载中...' : '没有更多了！'}
-            </div>)}
-          initialListSize={4}
-          pageSize={4}
-          scrollRenderAheadDistance={200}
+          renderFooter={listViewRenderFooter}
+          initialListSize={this.state.currentpage*10}
+          pageSize={this.state.currentpage*10}
+          scrollRenderAheadDistance={400}
           scrollEventThrottle={20}
           style={{
             height: document.documentElement.clientHeight,
             border: '1px solid #ddd',
             margin: '0.1rem 0',
           }}
-          useBodyScroll={true}
           scrollerOptions={{ scrollbars: false }}
-          onEndReached={this.onEndReached}
-          onEndReachedThreshold={10}
-        />
+        />):null}
       </TabPane>);
     });
     return (
@@ -242,8 +256,21 @@ class NoticeList extends React.Component {
             {multiTabPanels}
           </Tabs>
           <WhiteSpace />
-          {this.state.showAddEdit?(<Notice_AddEditComp backToTableListCall={()=>this.backToTableListCall()} isShow={this.state.showDetail}/>):null}
-          {this.state.showDetail?(<Notice_DetailComp backToTableListCall={()=>this.backToTableListCall()} isShow={this.state.showDetail}/>):null}
+          {this.state.showAddEdit?
+            (
+              <Notice_AddEditComp
+                tokenunid={this.props.tokenunid}
+                backToTableListCall={()=>this.backToTableListCall()}
+                />
+            ):null}
+          {this.state.showDetail?
+            (
+              <Notice_DetailComp
+                tokenunid={this.props.tokenunid}
+                detailInfo={this.state.detailInfo}
+                backToTableListCall={()=>this.backToTableListCall()}
+                />
+            ):null}
       </div>
     )
   }

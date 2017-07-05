@@ -92,8 +92,9 @@ export function getSuperviseListData(opts){
 }
 //获取通知公告的列表数据
 export function getNoticeListData(opts){
-  opts['viewname'] = 'hcit.module.tzgg.ui.VeTzgg';
-  getOAServerListData(opts);
+  // opts['viewname'] = 'hcit.module.tzgg.ui.VeTzgg';
+  opts['viewname'] = 'hcit.module.xxfb.ui.VeSjsh';
+  getOAServerListDataWithUrlParam(opts);
 }
 
 // Key：1表示获取获取草稿箱中的数据，10表示获取待办内容，2，表示办理中，4表示已办结，16777215表示所有。
@@ -116,6 +117,29 @@ export function getOAServerListData(params){ //从服务端获取列表数据
   }));
   finalRequestServer(options,param);
 }
+
+export function getOAServerListDataWithUrlParam(params){ //从服务端获取列表数据
+  let options = Object.assign({},{
+    url: 'http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
+    moduleUrl: '/openagent?agent=hcit.project.moa.transform.agent.MobileViewWork', //模块url
+    urlparam:{"rootlbunid":params.rootlbunid}
+  },params);
+  if(params.shbz){
+    options.urlparam.shbz = params.shbz;
+  }
+  options.urlparam = encodeURIComponent(JSON.stringify(options.urlparam));
+  var param = encodeURIComponent(JSON.stringify({
+    "ver" : "2",
+    "params" : {
+      "rootlbunid" : options.rootlbunid,
+      "currentpage" : options.currentpage || 1,
+      "viewname" : options.viewname,
+      "viewcolumntitles" : options.viewcolumntitles
+    }
+  }));
+  finalRequestServerWithUrlParam(options,param);
+}
+
 export function formatServerListData(colsNameEn, values){ //整理后端发过来的列表数据。
   let listArr = [];
   values.forEach((value, index)=>{
@@ -281,6 +305,7 @@ export function parseHistoryNotionList(list){
   }
   return notionMap;
 }
+
 //保存阅文意见
 export function saveVerifyNotion(params) {
   let options = Object.assign({},{
@@ -301,7 +326,7 @@ export function saveVerifyNotion(params) {
   finalRequestServer(options,param);
 }
 
-//获取表单附件列表。
+//获取表单公文附件列表。
 export function getFormAttachmentList(params){
   const moduleName2filetablename = {
     "签报管理":"qbgl_gwfj",
@@ -323,7 +348,7 @@ export function getFormAttachmentList(params){
   }));
   finalRequestServer(options,param);
 }
-//获取表单附件下载地址。
+//获取表单公文的附件下载地址。
 export function getAttachmentUrl(params){
   let url='';
   var strUrl = "http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.GetGwfjData";
@@ -341,6 +366,52 @@ export function getAttachmentUrl(params){
       }
   };
   url = strUrl + "&param=" + encodeURIComponent(JSON.stringify(paramJson));
+  return url;
+}
+
+
+//获取表单自定义附件列表。
+export function getFormCustomAttachmentList(params){
+  const moduleName2filetablename = {
+    "通知公告":"tzgg_fj",
+    "信息发布":"xxfb_fj"
+  }
+  const moduleName2moduleUrl = {
+    "通知公告":'/openagent?agent=hcit.module.tzgg.agent.TzggAttachmentOperation&opcode=2',
+    "信息发布":'/openagent?agent=hcit.module.xxfb.agent.XxfbAttachmentOperation&opcode=2'
+  }
+  let options = Object.assign({},{
+    url: 'http://10.192.0.241/openagent?agent=hcit.project.moa.transform.agent.OpenMobilePage',
+    moduleUrl:moduleName2moduleUrl[params.moduleName]
+  },params);
+  let param = encodeURIComponent(JSON.stringify({
+    "ver" : "2",
+    "params" : {
+      "docunid" : options.docunid,
+      "filetablename" : moduleName2filetablename[options.moduleName]
+    }
+  }));
+  finalRequestServer(options,param);
+}
+//获取下载自定义附件的url连接。
+export function getCustomAttachmentUrl(params){
+  const moduleName2filetablename = {
+    "通知公告":"tzgg_fj",
+    "信息发布":"xxfb_fj"
+  }
+  const moduleName2moduleUrl = {
+    "通知公告":'/openagent?agent=hcit.module.tzgg.agent.TzggAttachmentOperation&opcode=3',
+    "信息发布":'/openagent?agent=hcit.module.xxfb.agent.XxfbAttachmentOperation&opcode=3'
+  }
+  let url='';
+  var paramJson ={
+      ver : "2",
+      params :{
+          "fileunid" : params.fileunid,
+          "filetablename":moduleName2filetablename[params.moduleName]
+      }
+  };
+  url = "http://10.192.0.241/"+moduleName2moduleUrl[params.moduleName] + "&param=" + encodeURIComponent(JSON.stringify(paramJson));
   return url;
 }
 
@@ -405,8 +476,6 @@ export function saveFlowSendInfo(params) {
   }));
   finalRequestServer(options,param);
 }
-//TODO, 其他接口。
-
 
 //最后向服务端发送ajax请求的地方。
 export function finalRequestServer(options,param){
@@ -417,6 +486,34 @@ export function finalRequestServer(options,param){
         "tokenunid" : options.tokenunid,
         "param" : param,
         "url" : options.moduleUrl
+      },
+      async : true,
+      success : (result)=>{
+        let res  = decodeURIComponent(result);
+        res = res.replace(/%20/g, " ");
+        if(!res){
+          options.errorCall && options.errorCall({});
+          return;
+        }
+        let data = JSON.parse(res);
+        if(data.code == "1"){
+          options.successCall && options.successCall(data);
+        }else{
+          options.errorCall && options.errorCall(data);
+        }
+      }
+    });
+}
+//带有urlparam的最后向服务端发送ajax请求。
+export function finalRequestServerWithUrlParam(options,param){
+  $.ajax({
+      url : options.url,
+      type: 'POST',
+      data : {
+        "tokenunid" : options.tokenunid,
+        "param" : param,
+        "url" : options.moduleUrl,
+        "urlparam":options.urlparam
       },
       async : true,
       success : (result)=>{

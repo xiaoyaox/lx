@@ -65,6 +65,7 @@
 .ERecordPcStyle{
   .newDispatchList .am-list-item .am-input-control input{
     border:1px solid #ddd;
+    text-align: left;
     width: 402px;
     height:32px;
     border-radius:4px;
@@ -86,6 +87,10 @@
 .am-list-item .am-list-line .am-list-content span:nth-child(2),
 .am-list-item .am-list-line .am-list-content img{
   float:right;
+  padding-right: 20px;
+}
+.am-list-item .am-list-line .am-list-content span:nth-child(1){
+  padding-left: 20px;
 }
 .am-list-item .am-list-line .am-list-content img{
   width: 2.44rem;
