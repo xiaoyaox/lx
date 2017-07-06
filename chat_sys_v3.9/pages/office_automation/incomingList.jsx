@@ -21,6 +21,11 @@ class IncomingList extends React.Component {
         activeTabkey:'待办',
         colsNameCn:["收文日期","收文号","来文单位","来文文号","文件标题","主办部门", "当前办理人","办理时限"],
         colsNameEn:["acceptDate", "acceptNum", "sendUnit", "sendNum", "fileTitle","department","curUsers","handleTime"],
+        currentpage:1, //当前页码。
+        totalPageCount:1, //总页数。
+        isLoading:false, //是否在加载列表数据
+        isMoreLoading:false, //是否正在加载更多。
+        hasMore:false, //是否还有更多数据。
         listData:[],
         isLoading:false,
         dataSource: dataSource.cloneWithRows([]),
@@ -42,15 +47,29 @@ class IncomingList extends React.Component {
         this.setState({isLoading:false});
         let {colsNameEn} = this.state;
         let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
+        let listData = this.state.listData.concat(parseData);
         this.setState({
-          listData:data.values,
-          dataSource: this.state.dataSource.cloneWithRows(parseData),
+          isLoading:false,
+          isMoreLoading:false,
+          currentpage:currentpage+1,
+          totalPageCount:data.totalcount,
+          hasMore:(currentpage+1)<=data.totalcount,
+          listData:listData,
+          dataSource: this.state.dataSource.cloneWithRows(listData),
         });
       },
       errorCall: (data)=>{
         this.setState({isLoading:false});
       }
     });
+  }
+  onClickLoadMore = (evt)=>{
+    let {currentpage,totalPageCount,hasMore} = this.state;
+    if (!this.state.isMoreLoading && !hasMore) {
+      return;
+    }
+    this.setState({ isMoreLoading: true });
+    this.getServerListData(this.state.activeTabkey,currentpage);
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -64,7 +83,9 @@ class IncomingList extends React.Component {
   }
   handleTabClick = (key)=>{
     this.setState({
-      activeTabkey:key
+      activeTabkey:key,
+      listData:[],
+      currentpage:1
     });
     this.getServerListData(key,1);
   }
@@ -134,6 +155,17 @@ class IncomingList extends React.Component {
       </SwipeAction>
       );
     };
+    const listViewRenderFooter = ()=>{
+      if(this.state.isMoreLoading){
+        return (<div style={{ padding: 10, textAlign: 'center' }}>加载中...</div>);
+      }else if(this.state.hasMore){
+        return (<div style={{ padding: 10, textAlign: 'center' }} >
+              <Button type="default" style={{margin:'0 auto',width:'90%'}}
+                onClick={()=>this.onClickLoadMore()}>加载更多</Button>
+            </div>);
+      }
+      return (<div style={{ padding: 10, textAlign: 'center' }}>没有更多了！</div>);
+    };
     let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
       let {dataSource} = this.state;
       if(this.state.activeTabkey != tabName){
@@ -148,14 +180,14 @@ class IncomingList extends React.Component {
             dataSource={dataSource}
             renderRow={listRow}
             renderSeparator={separator}
-            initialListSize={5}
-            pageSize={5}
+            renderFooter={listViewRenderFooter}
+            initialListSize={this.state.currentpage*10}
+            pageSize={this.state.currentpage*10}
             scrollRenderAheadDistance={200}
             scrollEventThrottle={20}
             style={{
               height: document.documentElement.clientHeight,
             }}
-            useBodyScroll={true}
             scrollerOptions={{ scrollbars: true }}
           />
         ):null}

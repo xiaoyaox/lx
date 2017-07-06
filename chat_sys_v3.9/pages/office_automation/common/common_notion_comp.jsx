@@ -17,14 +17,14 @@ class CommonNotionComp extends React.Component {
     const notionListElements = notionList.map((item,index)=>{
       if(item.wordtype == "textnotion"){
         return (
-          <div key={index}>
+          <div key={index} style={{margin:'0.1rem auto'}}>
             <div>{item.content}</div>
             <div><span>——{item.ownercommonname}</span></div>
             <div>{item.modifytime}</div>
           </div>
         );
       }else if(item.wordtype == "writenotion"){
-        <div key={index}>
+        <div key={index} style={{margin:'0.1rem auto'}}>
           {
             item.content.map((cnt,k)=>{
               reurn (<div key={k}><img href={cnt.preimage}/></div>);

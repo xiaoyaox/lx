@@ -5,7 +5,7 @@ import React from 'react';
 // import myWebClient from 'client/my_web_client.jsx';
 import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WingBlank, WhiteSpace, Button, NavBar, TabBar, Toast } from 'antd-mobile';
-
+import { Icon} from 'antd';
 import DS_EditContentComp from './ds_edit_content_comp.jsx';
 import BottomTabBarComp from '../signReport/bottomTabBar_comp.jsx';
 import DS_SendContentComp from './ds_send_content_comp.jsx';//发文详情页-- 发送
@@ -60,7 +60,7 @@ class DS_AddComp extends React.Component {
   render() {
      const { detailInfo } = this.props;
      const formData = this.state.formData || {};
-    //  let clsName = this.props.isShow && !this.state.isHide?
+    //  let clsName = this.props.isShow && !this.state.isHide?//
     //  'oa_detail_container ds_detail_container oa_detail_container_show':
     //  'oa_detail_container ds_detail_container oa_detail_container_hide';
     return (

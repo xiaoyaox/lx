@@ -1,14 +1,9 @@
 //个人办公的待办事项
 import $ from 'jquery';
 import React from 'react';
-import myWebClient from 'client/my_web_client.jsx';
-import {Link} from 'react-router/es6';
+import * as OAUtils from 'pages/utils/OA_utils.jsx';
 import { WhiteSpace, WingBlank, Button,RefreshControl, ListView} from 'antd-mobile';
 import {Icon} from 'antd';
-
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 class PersonalTodoList extends React.Component {
   constructor(props) {
@@ -17,41 +12,54 @@ class PersonalTodoList extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
       this.state = {
+        colsNameCn:["标题", "模块",  "性质",  "紧急程度","送文人", "发送时间","办理时间"],
+        colsNameEn:["fileTitle", "modules", "property","urgency","sendtextPerson", "sendTime","handleTime"],
+        currentpage:1, //当前页码。
+        totalPageCount:1, //总页数。
+        isLoading:false, //是否在加载列表数据
+        isMoreLoading:false, //是否正在加载更多。
+        hasMore:false, //是否还有更多数据。
         listData:[], //原生list数据
         dataSource: dataSource.cloneWithRows([]),  //listView的源数据。
-        refreshing: false,
       };
   }
 
   componentDidMount(){
-    setTimeout(() => {
-      this.setState({
-        listData:[],
-        dataSource: this.state.dataSource.cloneWithRows([]),
-        refreshing: false
-      });
-    }, 1000);
     //从服务端获取数据。
-    // this.getServerListData();
+    this.getServerListData();
   }
 
-  onRefresh = () => {
-    if(this.state.refreshing){ //如果正在刷新就不用重复刷了。
-      return;
-    }
-    console.log('onRefresh');
-    this.setState({ refreshing: true });
-    setTimeout(() => {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(this.state.listData),
-        refreshing: false
-      });
-    }, 2000);
-    //从服务端获取数据。
-    // this.getServerListData();
-  }
-  getServerListData = ()=>{  //获取服务器端的待办事项数据。
-    //TODO
+  //获取服务器端的待办事项数据。
+  getServerListData = (currentpage)=>{
+    this.setState({isLoading:true});
+    OAUtils.getPersonalTodoListData({
+      tokenunid: this.props.tokenunid,
+      currentpage:currentpage,
+      urlparam:{
+        key:'dbsx',
+        type:3
+      },
+      viewcolumntitles:this.state.colsNameCn.join(','),
+      successCall: (data)=>{
+        console.log("get 待办事项的list data:",data);
+        let {colsNameEn} = this.state;
+        let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
+        let listData = this.state.listData.concat(parseData);
+        console.log("待办事项的format list data:",listData);
+        this.setState({
+          isLoading:false,
+          isMoreLoading:false,
+          currentpage:currentpage+1,
+          totalPageCount:data.totalcount,
+          listData:listData,
+          hasMore:(currentpage+1)<=data.totalcount,
+          dataSource: this.state.dataSource.cloneWithRows(listData),
+        });
+      },
+      errorCall: (data)=>{
+        this.setState({isLoading:false,isMoreLoading:false});
+      }
+    });
   }
 
   render() {
@@ -67,6 +75,7 @@ class PersonalTodoList extends React.Component {
       />
     );
     const listRow = (rowData, sectionID, rowID) => {
+      console.log(rowData.handleTime);
       return (
         <div key={rowID} className={'custom_listView_item'}
           style={{
@@ -74,23 +83,24 @@ class PersonalTodoList extends React.Component {
             backgroundColor: 'white',
           }}
         >
-          <div className={'list_item_container'}>
-            <div className={'list_item_middle'}>
-              <div className={'item_title'}>
-                {rowData.title}
-              </div>
-              <div style={{position:'absolute',bottom:'0'}}>{rowData.modules}</div>
-            </div>
-            <div className={'list_item_left'}>
-              <span className={'list_item_left_icon'} >
-                <Icon type="schedule" style={{fontSize:'3em'}} />
-              </span>
-            </div>
-            <div className={'list_item_right'}>
-              <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.sendTime}</div>
-              <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.sender}</div>
-            </div>
+        <div className={'list_item_container'}>
+          <div className={'list_item_middle'}>
+            <div style={{color:'black',fontSize:'0.33rem',fontWeight:'bold'}}>{rowData.fileTitle}</div>
+            <div>送文人：<span>{rowData.sendtextPerson}</span></div>
+            <div>模块：<span>{rowData.modules}</span></div>
+            <div>性质：<span>{rowData.property}</span></div>
+            <div>紧急程度：<span>{rowData.urgency}</span></div>
           </div>
+          <div className={'list_item_left'}>
+            <span className={'list_item_left_icon'} >
+              <Icon type="schedule" style={{fontSize:'3em'}} />
+            </span>
+          </div>
+          <div className={'list_item_right'}>
+            <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.sendTime}</div>
+            <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.handleTime}</div>
+          </div>
+        </div>
         </div>
       );
     };
@@ -110,11 +120,6 @@ class PersonalTodoList extends React.Component {
             margin: '0.1rem 0',
           }}
           scrollerOptions={{ scrollbars: true }}
-          refreshControl={<RefreshControl
-            loading={(<Icon type="loading" />)}
-            refreshing={this.state.refreshing}
-            onRefresh={this.onRefresh}
-          />}
         />
       </div>
     )

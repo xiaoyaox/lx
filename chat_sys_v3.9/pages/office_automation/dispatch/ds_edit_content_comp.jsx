@@ -10,6 +10,7 @@ import { WingBlank, WhiteSpace, Button, InputItem, NavBar,
 
 import { Icon, Select } from 'antd';
 import { createForm } from 'rc-form';
+import moment from 'moment';
 
 class DS_EditContentComp extends React.Component {
   constructor(props) {

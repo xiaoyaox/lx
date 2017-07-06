@@ -130,6 +130,7 @@ class CommonVerifyCompRaw extends React.Component {
       gwlcunid:this.props.gwlcunid,
       notionkind:'文字意见',
       notiontype:this.state.selectNotionType,
+      content:this.state.verifyCnt,
       successCall: (data)=>{
         console.log("save--签报管理的阅文意见:",data);
         this.props.backDetailCall();

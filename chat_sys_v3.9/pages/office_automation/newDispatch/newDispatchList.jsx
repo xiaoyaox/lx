@@ -1,17 +1,25 @@
-//发文管理
+//最新发文
 import $ from 'jquery';
 import React from 'react';
 import * as Utils from 'utils/utils.jsx';
+import { createForm } from 'rc-form';
 import * as OAUtils from 'pages/utils/OA_utils.jsx';
-import { Modal,WhiteSpace, SwipeAction,Popup, Tabs, RefreshControl, ListView,SearchBar, Button} from 'antd-mobile';
+import SearchZoneComp from './searchZone_comp.jsx';
+
+// import myWebClient from 'client/my_web_client.jsx';
+import { Modal,WhiteSpace, SwipeAction, Flex,Button,
+  Tabs, RefreshControl, ListView,SearchBar,Picker,
+  List,NavBar,DatePicker,InputItem} from 'antd-mobile';
 import { Icon} from 'antd';
 const TabPane = Tabs.TabPane;
-import DS_DetailComp from './ds_detail_comp.jsx';//详情
-import DS_AddComp from './ds_add_comp.jsx';//新增
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+const zhNow = moment().locale('zh-cn').utcOffset(8);
 
 const alert = Modal.alert;
-//发文管理
-class DispatchList extends React.Component {
+
+//最新发文
+class NewDispatchList extends React.Component {
   constructor(props) {
       super(props);
       this.showDeleteConfirmDialog = this.showDeleteConfirmDialog.bind(this);
@@ -19,62 +27,96 @@ class DispatchList extends React.Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       });
       this.state = {
-        tabsArr:["草稿箱", "待办", "办理中", "已发布", "所有"],
-        activeTabkey:'待办',
-        colsNameCn:["拟稿日期","拟稿单位", "拟稿人", "文件标题", "发文类型", "发文文号", "当前办理人", "办理状态"],
-        colsNameEn:["draftDate", "draftUnit", "draftPerson", "fileTitle", "fileType", "fileNum", "curUsers", "status"],
+        rootlbunid: '72060E133431242D987C0A80A4124268',
+        tabsArr:["按日期", "按年度", "按主办部门"], //"组合查询" ，不好做，先去掉不做了，如果一定要再和海昌那边协调。
+        activeTabkey:'按日期',
+        colsNameCn:["发布日期", "发文文号",  "标题",  "拟稿单位",  "附件",  "Word原稿",  "修改痕迹"],
+        colsNameEn:["publishTime", "fileNum", "fileTitle","draftUnit", "attachment", "wordOrigin", "modifyRecord"],
         currentpage:1, //当前页码。
         totalPageCount:1, //总页数。
         isLoading:false, //是否在加载列表数据
         isMoreLoading:false, //是否正在加载更多。
         hasMore:false, //是否还有更多数据。
         listData:[],
-        detailInfo:null,
         dataSource: dataSource.cloneWithRows([]),
-        refreshing: true,
+        departmentSource:[],
         showDetail:false,
-        showAdd:false
+        detailInfo:null,
+        curYearMonth:moment(new Date()), //当前日期。
+        curDepartmentUnid:'', //默认的部门id. 默认为'148中心' ;
       };
   }
   componentWillMount(){
+    OAUtils.getOrganization({
+      tokenunid:this.props.tokenunid,
+      successCall: (data)=>{
+        let organizationList = OAUtils.formatOrganizationData(data.values);
+        console.log("获取OA的组织机构数据：",organizationList);
+        let dataDepartment=[] ,curDepartmentUnid;
+        for(var i=0;i<organizationList.length;i++){
+          let commonname = organizationList[i].commonname;
+          if(commonname && commonname.indexOf('暂定')==-1 && commonname.indexOf('打印室')==-1){
+            dataDepartment.push(organizationList[i]);
+          }
+          if(commonname == "148中心"){
+            curDepartmentUnid = organizationList[i].unid;
+          }
+        }
+        this.setState({
+          curDepartmentUnid:curDepartmentUnid,
+          departmentSource:dataDepartment,
+        });
+      }
+    });
     //从服务端获取数据。
     this.getServerListData(this.state.activeTabkey,this.state.currentpage);
   }
-  getServerListData = (keyName,currentpage,callback)=>{ //从服务端获取列表数据
+  getServerListData = (activeTabkey,currentpage,params)=>{
     this.setState({isLoading:true});
-    OAUtils.getDispatchListData({
+    OAUtils.getNewDispatchListData({
       tokenunid: this.props.tokenunid,
       currentpage:currentpage,
-      keyName:keyName,
+      urlparam:this.getSearchUrlParams(activeTabkey,params||{}),
       viewcolumntitles:this.state.colsNameCn.join(','),
       successCall: (data)=>{
-        console.log("get server signReport list data:",data);
+        console.log("get 最新发文的list data:",data);
         let {colsNameEn} = this.state;
         let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
         let listData = this.state.listData.concat(parseData);
+        console.log("最新发文-format data:",listData);
         this.setState({
           isLoading:false,
           isMoreLoading:false,
-          currentpage:this.state.currentpage+1,
+          currentpage:currentpage+1,
           totalPageCount:data.totalcount,
-          hasMore:(currentpage+1)<=data.totalcount,
           listData:listData,
+          hasMore:(currentpage+1)<=data.totalcount,
           dataSource: this.state.dataSource.cloneWithRows(listData),
         });
-        callback && callback();
       },
       errorCall: (data)=>{
         this.setState({isLoading:false,isMoreLoading:false});
       }
     });
   }
-  onEndReached = (evt)=>{
-    let {currentpage,totalPageCount} = this.state;
-    if (this.state.isMoreLoading && (currentpage==totalPageCount)) {
-      return;
+  getSearchUrlParams = (activeTabkey,params)=>{
+    let options = {};
+    if(activeTabkey == "按日期"){
+      options.key = 'rq';
+    }else if(activeTabkey == "按年度"){
+      options.key = 'nd';
+      options.state = 'fb';
+      options.year = params.year || this.state.curYearMonth.format('YYYY');
+      options.month = params.month || this.state.curYearMonth.format('MM');
+    }else if(activeTabkey == "按主办部门"){
+      options.key = 'bm';
+      options['zbbmid'] = params.department || this.state.curDepartmentUnid;
     }
-    this.setState({ isMoreLoading: true });
-    this.getServerListData(this.state.activeTabkey,currentpage++);
+    return options;
+  }
+  updateSearchParams = (params)=>{
+    this.setState({listData:[]});
+    this.getServerListData(this.state.activeTabkey,this.state.currentpage-1,params);
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -95,12 +137,8 @@ class DispatchList extends React.Component {
     this.getServerListData(key,1);
   }
   onClickOneRow = (rowData)=>{
-    console.log("发文管理 click rowData:",rowData);
-    this.setState({detailInfo:rowData, showDetail:true,showAdd: false});
-  }
-
-  backToTableListCall = ()=>{
-    this.setState({showDetail:false,showAdd: false});
+    console.log("incomingList click rowData:",rowData);
+    this.setState({detailInfo:rowData, showDetail:true});
   }
   onClickLoadMore = (evt)=>{
     let {currentpage,totalPageCount,hasMore} = this.state;
@@ -111,11 +149,8 @@ class DispatchList extends React.Component {
     this.getServerListData(this.state.activeTabkey,currentpage);
   }
 
-  onClickAddEdit = ()=>{
-    this.setState({showDetail:false, showAdd: true});
-  }
-
   render() {
+    const { getFieldProps, getFieldError } = this.props.form;
     const separator = (sectionID, rowID) => (
       <div
         key={`${sectionID}-${rowID}`}
@@ -156,8 +191,7 @@ class DispatchList extends React.Component {
           >
             <div className={'list_item_container'}>
               <div className={'list_item_middle'}>
-                <div className="item_title">{rowData.fileTitle}</div>
-                <div>当前办理人：<span>{rowData.curUsers}</span></div>
+                <div style={{color:'black',fontSize:'0.33rem',fontWeight:'bold'}}>{rowData.fileTitle}</div>
               </div>
               <div className={'list_item_left'}>
                 <span className={'list_item_left_icon'} >
@@ -165,8 +199,8 @@ class DispatchList extends React.Component {
                 </span>
               </div>
               <div className={'list_item_right'}>
-                <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.draftDate}</div>
-                <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.status}</div>
+                <div style={{position:'absolute',top:'0',right:'0'}}>{rowData.publishTime}</div>
+                <div style={{ position:'absolute',bottom:'-1rem',right:'0' }}>{rowData.draftUnit}</div>
               </div>
             </div>
         </div>
@@ -183,68 +217,56 @@ class DispatchList extends React.Component {
             </div>);
       }
       return (<div style={{ padding: 10, textAlign: 'center' }}>没有更多了！</div>);
-    }
+    };
+
     let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
       let {dataSource} = this.state;
       if(this.state.activeTabkey != tabName){
         dataSource = this.state.dataSource.cloneWithRows([]);
       }
       return (<TabPane tab={tabName} key={tabName} >
-        <Button className="btn" type="primary" style={{margin:"0.16rem"}} onClick={()=>this.onClickAddEdit()}><Icon type="plus" /> 新建</Button>
-        <SearchBar placeholder="搜索" />
+        <SearchZoneComp
+          updateSearchParams={this.updateSearchParams}
+          departmentSource={this.state.departmentSource}
+          tabName={tabName}
+        />
         {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
         {(!this.state.isLoading && this.state.listData.length<=0)?
-          <div style={{textAlign:'center'}}>暂无数据</div>:null}
-        {!this.state.showAdd && !this.state.showDetail ? (
-          <ListView
-            dataSource={dataSource}
-            renderRow={listRow}
-            renderSeparator={separator}
-            renderFooter={listViewRenderFooter}
-            initialListSize={this.state.currentpage*10}
-            pageSize={this.state.currentpage*10}
-            scrollRenderAheadDistance={200}
-            scrollEventThrottle={20}
-            style={{
-              height: document.documentElement.clientHeight,
-            }}
-            scrollerOptions={{ scrollbars: false }}
-          />
-        ):null}
+          (<div style={{textAlign:'center'}}>暂无数据</div>):null}
+        <ListView
+          dataSource={dataSource}
+          renderRow={listRow}
+          renderSeparator={separator}
+          renderFooter={listViewRenderFooter}
+          initialListSize={this.state.currentpage*10}
+          pageSize={this.state.currentpage*10}
+          scrollRenderAheadDistance={400}
+          scrollEventThrottle={20}
+          style={{
+            height: document.documentElement.clientHeight
+          }}
+          scrollerOptions={{ scrollbars: false }}
+        />
       </TabPane>);
     });
-
     return (
-      <div>
+      <div className="newDispatchList">
         <Tabs
-          defaultActiveKey={this.state.activeTabkey}
-          pageSize={5}
           swipeable={false}
+          defaultActiveKey={this.state.activeTabkey}
+          pageSize={4}
           onTabClick={this.handleTabClick}>
           {multiTabPanels}
         </Tabs>
         <WhiteSpace />
-        {this.state.showAdd?
-          (<DS_AddComp
-            tokenunid={this.props.tokenunid}
-            backToTableListCall={()=>this.backToTableListCall()}
-            />):null
-        }
-        {this.state.showDetail?
-          (<DS_DetailComp
-            detailInfo={this.state.detailInfo}
-            tokenunid={this.props.tokenunid}
-            backToTableListCall={()=>this.backToTableListCall()}
-            />):null
-        }
       </div>
     )
   }
 }
 
-DispatchList.defaultProps = {
+NewDispatchList.defaultProps = {
 };
-DispatchList.propTypes = {
+NewDispatchList.propTypes = {
 };
 
-export default DispatchList;
+export default createForm()(NewDispatchList);

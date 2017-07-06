@@ -68,24 +68,6 @@ class DS_DetailComp extends React.Component {
     this.setState({curSubTab:'send'});
   }
 
-  renderContent = (pageText)=> {
-    return (
-      <div style={{ backgroundColor: 'white', height: '100%', textAlign: 'center' }}>
-        <div style={{ paddingTop: 60 }}>你已点击“{pageText}” tab， 当前展示“{pageText}”信息</div>
-        <a style={{ display: 'block', marginTop: 40, marginBottom: 600, color: '#108ee9' }}
-          onClick={(e) => {
-            e.preventDefault();
-            this.setState({
-              hidden: !this.state.hidden,
-            });
-          }}
-        >
-          点击切换 tab-bar 显示/隐藏
-        </a>
-      </div>
-    );
-  }
-
   onClickSave = ()=> {
     Toast.info('保存成功!', 1);
     this.props.backToTableListCall();
@@ -95,9 +77,6 @@ class DS_DetailComp extends React.Component {
   render() {
      const { detailInfo } = this.props;
      const formData = this.state.formData || {};
-    //  let clsName = this.props.isShow && !this.state.isHide?
-    //  'oa_detail_container ds_detail_container oa_detail_container_show':
-    //  'oa_detail_container ds_detail_container oa_detail_container_hide';
     return (
       <div className={'oa_detail_container ds_detail_container'}>
         <NavBar className="mobile_navbar_custom"

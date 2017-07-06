@@ -10,6 +10,7 @@ import { WingBlank, WhiteSpace, Button, InputItem,
 import { Icon, Select } from 'antd';
 import { createForm } from 'rc-form';
 import CommonFlowTraceComp from '../common_flowTrace_comp.jsx';//办文跟踪
+import CommonNotionComp from '../common/common_notion_comp.jsx';
 
 class DS_DetailContentComp extends React.Component {
   constructor(props) {

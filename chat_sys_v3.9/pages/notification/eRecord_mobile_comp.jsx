@@ -27,7 +27,7 @@ class ERecordisMobileComp extends React.Component {
       this.state = {
         dataSource: dataSource.cloneWithRows([]),
         refreshing: true,
-        selectOrganId:'',//选中的组织结构的ID数组
+        selectOrganId:'1',//选中的组织结构的ID数组
         columns:[],
         sel: '',
       };

@@ -28,6 +28,7 @@ class SignReportList extends React.Component {
         totalPageCount:1, //总页数。
         isLoading:false,
         isMoreLoading:false, //是否正在加载更多。
+        hasMore:false, //是否还有更多数据。
         listData:[],
         dataSource: dataSource.cloneWithRows([]),
         detailInfo:null,
@@ -49,14 +50,15 @@ class SignReportList extends React.Component {
         console.log("get server signReport list data:",data);
         let {colsNameEn} = this.state;
         let parseData = OAUtils.formatServerListData(colsNameEn, data.values);
-        parseData = { ...this.state.listData, ...parseData };
+        let listData = this.state.listData.concat(parseData);
         this.setState({
           isLoading:false,
           isMoreLoading:false,
-          currentpage:this.state.currentpage+1,
+          currentpage:currentpage+1,
           totalPageCount:data.totalcount,
-          listData:parseData,
-          dataSource: this.state.dataSource.cloneWithRows(parseData),
+          hasMore:(currentpage+1)<=data.totalcount,
+          listData:listData,
+          dataSource: this.state.dataSource.cloneWithRows(listData),
         });
       },
       errorCall: (data)=>{
@@ -64,13 +66,13 @@ class SignReportList extends React.Component {
       }
     });
   }
-  onEndReached = (evt)=>{
-    let {currentpage,totalPageCount} = this.state;
-    if (!this.state.isMoreLoading && (currentpage==totalPageCount)) {
+  onClickLoadMore = (evt)=>{
+    let {currentpage,totalPageCount,hasMore} = this.state;
+    if (!this.state.isMoreLoading && !hasMore) {
       return;
     }
     this.setState({ isMoreLoading: true });
-    this.getServerListData(this.state.activeTabkey,currentpage++);
+    this.getServerListData(this.state.activeTabkey,currentpage);
   }
   showDeleteConfirmDialog = (record)=>{
     let selectedId = record.id ? record.id : '';
@@ -159,6 +161,17 @@ class SignReportList extends React.Component {
       </SwipeAction>
       );
     };
+    const listViewRenderFooter = ()=>{
+      if(this.state.isMoreLoading){
+        return (<div style={{ padding: 10, textAlign: 'center' }}>加载中...</div>);
+      }else if(this.state.hasMore){
+        return (<div style={{ padding: 10, textAlign: 'center' }} >
+              <Button type="default" style={{margin:'0 auto',width:'90%'}}
+                onClick={()=>this.onClickLoadMore()}>加载更多</Button>
+            </div>);
+      }
+      return (<div style={{ padding: 10, textAlign: 'center' }}>没有更多了！</div>);
+    };
     let multiTabPanels = this.state.tabsArr.map((tabName,index)=>{
       let {dataSource} = this.state;
       if(this.state.activeTabkey != tabName){
@@ -180,21 +193,15 @@ class SignReportList extends React.Component {
           dataSource={dataSource}
           renderRow={listRow}
           renderSeparator={separator}
-          renderFooter={() => (<div style={{ padding: 20, textAlign: 'center' }}>
-              {this.state.isMoreLoading ? '加载中...' : '没有更多了！'}
-            </div>)}
-          delayTime={300}
-          initialListSize={10}
-          pageSize={50}
+          renderFooter={listViewRenderFooter}
+          initialListSize={this.state.currentpage*10}
+          pageSize={this.state.currentpage*10}
           scrollRenderAheadDistance={200}
           scrollEventThrottle={20}
           style={{
             height: document.documentElement.clientHeight,
           }}
-          useBodyScroll={true}
           scrollerOptions={{ scrollbars: false }}
-          onEndReached={this.onEndReached}
-          onEndReachedThreshold={10}
         />):null}
       </TabPane>);
     });

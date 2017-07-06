@@ -227,7 +227,8 @@ class NoticeList extends React.Component {
         onClick={()=>this.onClickAddEdit()}><Icon type="plus" />新建</Button>
         <SearchBar placeholder="搜索" />
         {this.state.isLoading?<div style={{textAlign:'center'}}><Icon type="loading"/></div>:null}
-        {(!this.state.isLoading && this.state.listData.length<=0)?<div style={{textAlign:'center'}}>暂无数据</div>:null}
+        {(!this.state.isLoading && this.state.listData.length<=0)?
+          <div style={{textAlign:'center'}}>暂无数据</div>:null}
 
         {(!this.state.showAddEdit && !this.state.showDetail)?(<ListView
           dataSource={this.state.dataSource}
@@ -239,9 +240,7 @@ class NoticeList extends React.Component {
           scrollRenderAheadDistance={400}
           scrollEventThrottle={20}
           style={{
-            height: document.documentElement.clientHeight,
-            border: '1px solid #ddd',
-            margin: '0.1rem 0',
+            height: document.documentElement.clientHeight
           }}
           scrollerOptions={{ scrollbars: false }}
         />):null}

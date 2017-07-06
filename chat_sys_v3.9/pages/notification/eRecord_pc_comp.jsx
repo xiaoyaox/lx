@@ -28,7 +28,7 @@ class ERecordisMobileComp extends React.Component {
       this.state = {
         dataSource: dataSource.cloneWithRows([]),
         refreshing: true,
-        selectOrganId:'',//选中的组织结构的ID数组
+        selectOrganId:'1',//选中的组织结构的ID数组
         columns:[],
         sel: '',
         visible: false,
@@ -156,11 +156,11 @@ class ERecordisMobileComp extends React.Component {
                         </Select>
                   </div>
 
-                  <InputItem clear {...getFieldProps('name')} style={{ float: 'left',marginLeft:20 }}
+                  <InputItem {...getFieldProps('name')} style={{ float: 'left',marginLeft:20 }}
                   editable={true} labelNumber={2} placeholder="请输入姓名"><span style={{color: 'black',fontSize:'0.3rem',verticalAlign:'super'}}>
                   <Icon type="user"
                   style={{color: '#278197',fontSize:'0.6rem'}}/>姓名:</span></InputItem>
-                  <InputItem clear {...getFieldProps('telephone')} style={{float: 'left'}}
+                  <InputItem {...getFieldProps('telephone')} style={{float: 'left'}}
                   editable={true} labelNumber={2} placeholder="请输入手机号">
                   <span style={{color: 'black',fontSize:'0.3rem',verticalAlign:'super'}}>
                   <Icon type="phone"

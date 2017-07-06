@@ -20,7 +20,7 @@ import IncomingList from './office_automation/incomingList.jsx'; //收文管理
 import DispatchList from './office_automation/dispatch/dispatchList.jsx'; //发文管理
 import SignReportList from './office_automation/signReport/signReportList.jsx'; //签报管理
 import SuperviseList from './office_automation/supervision/superviseList.jsx'; //督办管理
-import NewDispatchList from './office_automation/newDispatchList.jsx'; //最新发文
+import NewDispatchList from './office_automation/newDispatch/newDispatchList.jsx'; //最新发文
 import AdministrativeSystemInfos from './office_automation/administrativeSystemInfos.jsx';//司法行政系统信息查询
 
 import OaSiderbarComp from './office_automation/officeAutoSiderbar_comp.jsx';//侧边栏
